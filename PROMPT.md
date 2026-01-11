@@ -1,131 +1,50 @@
-# DCM–CMDB Bridge – Claude Execution Prompt
+# DCM-CMDB Bridge - Claude Operating Prompt (v5-star)
 
-## Role
-You are Claude Code acting as a senior platform engineer and architect.
+## Mission
+Bootstrap a production-oriented SaaS platform that bridges DCM runtime truth to CMDB.
+Start with Kubernetes discovery + mock CMDB, implement drift detection, governed actions, approvals, and audit logs.
+Deliver a clean, testable, dockerized repo with CI.
 
-Your job is to bootstrap a production-oriented SaaS platform that bridges
-DCM runtime truth with CMDB systems, starting with Kubernetes and a mock CMDB,
-and later extending to ServiceNow.
+## Operating Mode
+- Do not run large command batches without showing a plan.
+- Work in phases and small commits.
+- Be idempotent and safe. Never delete user data.
+- If auth is required (GitHub), pause and tell me exactly what to run.
+- Prefer clarity over speed.
 
-Do NOT rush execution.
-First understand, then plan, then execute in phases.
+## Product Definition
+One-liner:
+A platform that discovers runtime infrastructure (DCM sources), normalizes entities, detects drift vs CMDB, and syncs changes with governance, approvals, and auditability.
 
----
+Primary users:
+- DevOps / Platform
+- Security
+- IT Ops
 
-## Product Overview
-
-**Name:** DCM–CMDB Bridge  
-**One-liner:**  
-A platform that discovers runtime infrastructure, normalizes entities,
-detects drift against CMDB, and applies governed sync actions with full auditability.
-
----
-
-## Core Concepts
-
-### DCM Sources
-- Kubernetes (first)
-- Cloud accounts (later)
-- CI/CD metadata
-- IAM / NHI
-- Network exposure
-
-### CMDB
-- Mock CMDB (local DB) for MVP
-- ServiceNow connector interface (not full impl yet)
-
-### Normalized Entities
-- Asset
-- Service
-- Component
-- Environment
-- Owner / Team
-- Dependency
-- Exposure
-- Identity (NHI-ready)
-
-### Drift Types
-- Structural (missing / extra entities)
-- Ownership (no owner, mismatch)
-- Security (exposed without classification)
-- Lifecycle (stale / orphan)
-
----
-
-## Architecture (MVP)
-
-Collectors → Normalization → Drift Engine → Action Workflow → CMDB Interface  
-                                      ↘ UI + Audit Log
-
----
+## MVP Scope
+- Kubernetes discovery
+- Normalization
+- Drift detection
+- Action workflow with approvals
+- Audit log
+- Minimal modern UI
 
 ## Tech Stack
-
 - Backend: Python 3.11 + FastAPI
-- Workers: Celery or RQ + Redis
+- Worker: RQ + Redis
 - DB: Postgres
-- Frontend: React + Vite + TypeScript + Tailwind
+- UI: React + Vite + TypeScript + Tailwind
 - Local dev: docker-compose
 - Tests: pytest, vitest, Playwright (smoke)
 - CI: GitHub Actions
 
----
-
 ## Execution Rules
-
-- Never delete files
-- Prefer small commits
-- Stop and explain if auth is needed
-- Always show plan before running large changes
-- Work in phases
-
----
-
-## Required Phases
-
-### Phase 0 – Planning (MANDATORY FIRST STEP)
-- Read repo structure
-- Summarize understanding
-- Propose phased execution plan
-- WAIT for approval
-
-### Phase 1 – Repo & Structure
-- Create folders
-- README
-- .gitignore
-
-### Phase 2 – Backend Core
-- Models
-- Normalization
-- Drift engine
-- API endpoints
-
-### Phase 3 – UI Skeleton
-- Dashboard
-- Drift list
-- Drift details
-- Mock auth
-
-### Phase 4 – Tests
-- Unit
-- Integration
-- API contract
-- Basic e2e
-
-### Phase 5 – CI
-- Backend tests
-- UI tests
-- Docker build
-- Security checks (non-blocking)
-
----
+- Work strictly by PHASES.md
+- Read ARCHITECTURE.md, TESTING.md, CI.md before coding
+- Phase 0 is planning only
 
 ## First Instruction
-
-DO NOT RUN COMMANDS YET.
-
-1. Read this file fully.
-2. Summarize your understanding in your own words.
-3. Propose a clean execution plan with phases and commits.
-4. Ask for confirmation.
-
+1. Read PROMPT.md and all referenced docs.
+2. Summarize your understanding.
+3. Propose execution plan for Phase 1 only.
+4. Wait for approval.
