@@ -48,3 +48,9 @@ Primary users:
 2. Summarize your understanding.
 3. Propose execution plan for Phase 1 only.
 4. Wait for approval.
+
+---
+
+## ADR Requirement
+Before implementing the Graph feature, read ADR-0002 and confirm it.
+If any deviation is needed, propose a new ADR.

@@ -13,3 +13,9 @@
 
 ## Requirements
 - CI must pass before merge
+
+---
+
+## Graph Coverage in CI
+- Backend tests must include graph builder unit tests.
+- UI tests must include Graph page smoke/component coverage.

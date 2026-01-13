@@ -43,3 +43,15 @@ Commit: test: comprehensive tests
 Checkpoint:
 - All CI jobs green
 Commit: ci: github actions
+
+## Phase 5.5 - Infrastructure Graph (Runtime + CMDB)
+Checkpoint:
+- UI Graph page exists with:
+  - zoom/pan, search, filters
+  - drift overlay coloring
+  - node drilldown side panel (Overview, Ownership, CMDB Mapping, Drift, Actions, Audit)
+- Backend provides:
+  - graph snapshot build and storage
+  - GET latest snapshot endpoints
+- Graph shows both Runtime nodes and CMDB nodes with "mapped-to" edges
+Commit: feat(graph): infra visualization with cmdb comparison
