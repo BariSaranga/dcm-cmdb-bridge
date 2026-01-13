@@ -4,7 +4,13 @@ from sqlalchemy.orm import Session
 
 from config import settings
 from database import get_db, engine, Base
-from routers import discovery_router
+from routers import (
+    discovery_router,
+    cmdb_router,
+    drift_router,
+    actions_router,
+    audit_router,
+)
 
 app = FastAPI(
     title=settings.app_name,
@@ -12,7 +18,12 @@ app = FastAPI(
     version="0.1.0",
 )
 
+# Register routers
 app.include_router(discovery_router)
+app.include_router(cmdb_router)
+app.include_router(drift_router)
+app.include_router(actions_router)
+app.include_router(audit_router)
 
 
 @app.on_event("startup")
