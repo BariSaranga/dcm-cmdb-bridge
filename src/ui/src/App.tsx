@@ -6,6 +6,7 @@ import { theme } from './theme/theme';
 import { AppShell } from './components/layout';
 
 import { DashboardPage } from './features/dashboard/DashboardPage';
+import GraphPage from './features/graph/GraphPage';
 import { DriftsPage } from './features/drifts/DriftsPage';
 import { ActionsPage } from './features/actions/ActionsPage';
 import { AuditPage } from './features/audit/AuditPage';
@@ -30,6 +31,7 @@ export default function App() {
             <Routes>
               <Route path="/" element={<Navigate to="/dashboard" replace />} />
               <Route path="/dashboard" element={<DashboardPage />} />
+              <Route path="/graph" element={<GraphPage />} />
               <Route path="/drifts" element={<DriftsPage />} />
               <Route path="/actions" element={<ActionsPage />} />
               <Route path="/audit" element={<AuditPage />} />

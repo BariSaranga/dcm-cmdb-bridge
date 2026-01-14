@@ -127,3 +127,70 @@ export interface CMDBItem {
   created_at: string;
   updated_at: string;
 }
+
+// Graph types
+export type GraphSnapshotStatus = 'building' | 'completed' | 'failed';
+export type GraphNodeType = 'runtime' | 'cmdb';
+export type GraphDriftStatus =
+  | 'mapped'
+  | 'missing_in_cmdb'
+  | 'stale_in_cmdb'
+  | 'ownership_mismatch'
+  | 'config_mismatch'
+  | 'lifecycle_conflict'
+  | 'drift_detected';
+
+export interface GraphNode {
+  id: number;
+  node_id: string;
+  node_type: GraphNodeType;
+  entity_id: number | null;
+  cmdb_item_id: number | null;
+  kind: string;
+  name: string;
+  namespace: string | null;
+  owner: string | null;
+  environment: string | null;
+  drift_status: GraphDriftStatus | null;
+  drift_severity: DriftSeverity | null;
+  drift_record_id: number | null;
+  position_x: number | null;
+  position_y: number | null;
+  extra_data: Record<string, unknown> | null;
+}
+
+export interface GraphEdge {
+  id: number;
+  edge_id: string;
+  edge_type: string;
+  source_node_id: string;
+  target_node_id: string;
+  label: string | null;
+  style: string | null;
+  extra_data: Record<string, unknown> | null;
+}
+
+export interface GraphSnapshot {
+  id: number;
+  snapshot_id: number;
+  status: GraphSnapshotStatus;
+  node_count: number;
+  edge_count: number;
+  error_message: string | null;
+  created_at: string;
+  completed_at: string | null;
+}
+
+export interface GraphSnapshotDetail extends GraphSnapshot {
+  nodes: GraphNode[];
+  edges: GraphEdge[];
+}
+
+export interface GraphSummary {
+  total_snapshots: number;
+  latest_snapshot_id: number | null;
+  latest_node_count: number;
+  latest_edge_count: number;
+  nodes_by_type: Record<string, number>;
+  nodes_by_drift_status: Record<string, number>;
+}

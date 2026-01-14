@@ -12,6 +12,7 @@ import {
   Divider,
 } from '@mui/material';
 import DashboardIcon from '@mui/icons-material/Dashboard';
+import AccountTreeIcon from '@mui/icons-material/AccountTree';
 import WarningIcon from '@mui/icons-material/Warning';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import HistoryIcon from '@mui/icons-material/History';
@@ -20,6 +21,7 @@ const DRAWER_WIDTH = 240;
 
 const navItems = [
   { path: '/dashboard', label: 'Dashboard', icon: <DashboardIcon /> },
+  { path: '/graph', label: 'Infrastructure Graph', icon: <AccountTreeIcon /> },
   { path: '/drifts', label: 'Drifts', icon: <WarningIcon /> },
   { path: '/actions', label: 'Actions', icon: <PlaylistAddCheckIcon /> },
   { path: '/audit', label: 'Audit Log', icon: <HistoryIcon /> },

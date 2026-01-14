@@ -11,6 +11,7 @@ from routers import (
     drift_router,
     actions_router,
     audit_router,
+    graph_router,
 )
 
 app = FastAPI(
@@ -34,6 +35,7 @@ app.include_router(cmdb_router)
 app.include_router(drift_router)
 app.include_router(actions_router)
 app.include_router(audit_router)
+app.include_router(graph_router)
 
 
 @app.on_event("startup")
