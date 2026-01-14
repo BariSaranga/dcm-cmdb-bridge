@@ -42,5 +42,14 @@ services:
       redis:
         condition: service_healthy
 
+  ui:
+    build:
+      context: ../src/ui
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - api
+
 volumes:
   postgres_data:
