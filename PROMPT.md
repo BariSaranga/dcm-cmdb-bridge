@@ -54,3 +54,32 @@ Primary users:
 ## ADR Requirement
 Before implementing the Graph feature, read ADR-0002 and confirm it.
 If any deviation is needed, propose a new ADR.
+
+---
+
+## CORE DIFFERENTIATOR: Infrastructure Truth vs Org Reality
+(The Infrastructure Lie Detector)
+
+The platform must visually and conversationally expose the gap between:
+- Runtime infrastructure truth
+- CMDB representation
+- Organizational ownership and approvals
+
+Primary output:
+A screenshot-ready, explainable artifact:
+- One service
+- One drift
+- One AI explanation
+
+### Ask the Infrastructure (AI Copilot)
+The AI must:
+- Answer natural language questions about infrastructure state
+- Be grounded ONLY in graph, CMDB, drift and audit data
+- Return structured responses:
+  - Summary
+  - Evidence
+  - Inference + confidence
+  - Why this matters
+  - Suggested actions
+
+The AI is a decision-support layer and must never auto-apply changes.

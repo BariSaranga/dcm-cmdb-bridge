@@ -88,3 +88,19 @@ Graph View:
   - Drift (records + diff)
   - Actions (propose/approve/apply)
   - Audit (history)
+
+---
+
+## Infrastructure Lie Detector Layer
+
+Purpose:
+Expose and explain discrepancies between runtime infrastructure and organizational records.
+
+Structure:
+- Runtime graph (DCM truth)
+- CMDB graph
+- Bureaucracy context (ownership, approvals, blockers)
+
+AI Layer:
+Consumes graph snapshots, CMDB records, drift data, and audit logs.
+Produces evidence-based explanations with confidence and action suggestions.

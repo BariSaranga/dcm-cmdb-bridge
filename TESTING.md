@@ -40,3 +40,14 @@ Fixtures:
   - search for a service
   - open node details
   - verify CMDB mapping tab shows status (mapped/missing/stale)
+
+---
+
+## Lie Detector Demo Testing
+
+- Deterministic single-service demo dataset
+- Snapshot-based AI response validation
+- Validate:
+  - Evidence maps to real entities
+  - Confidence is present
+  - Graph highlights match explanation

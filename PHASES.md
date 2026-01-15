@@ -55,3 +55,14 @@ Checkpoint:
   - GET latest snapshot endpoints
 - Graph shows both Runtime nodes and CMDB nodes with "mapped-to" edges
 Commit: feat(graph): infra visualization with cmdb comparison
+
+## Phase 6.5 - Infrastructure Lie Detector (Viral Demo Phase)
+
+Checkpoint:
+- Three-column view: Runtime / CMDB / Bureaucracy
+- AI explanation rendered below the graph
+- Graph highlights driven by AI answers
+- One polished, documented demo scenario
+- Screenshot-ready UI
+
+Commit: feat(viral): infrastructure truth vs org reality
