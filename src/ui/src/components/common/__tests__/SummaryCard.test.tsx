@@ -36,8 +36,7 @@ describe('SummaryCard', () => {
   });
 
   it('does not render icon container when not provided', () => {
-    const { container } = render(<SummaryCard title="Title" value={10} />);
-    // Icon container would have specific styling, but we just check content
+    render(<SummaryCard title="Title" value={10} />);
     expect(screen.queryByTestId('test-icon')).not.toBeInTheDocument();
   });
 
