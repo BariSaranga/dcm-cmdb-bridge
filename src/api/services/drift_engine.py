@@ -16,6 +16,9 @@ from sqlalchemy.orm import Session
 
 from models import Snapshot, NormalizedEntity, CMDBItem
 from models.drift import DriftRecord
+from logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class DriftEngine:
@@ -37,8 +40,11 @@ class DriftEngine:
         Returns:
             List of created DriftRecord instances
         """
+        logger.info("Starting drift detection", extra={"snapshot_id": snapshot_id})
+
         snapshot = self.db.query(Snapshot).filter(Snapshot.id == snapshot_id).first()
         if not snapshot:
+            logger.error("Snapshot not found", extra={"snapshot_id": snapshot_id})
             raise ValueError(f"Snapshot {snapshot_id} not found")
 
         # Get all entities from snapshot
@@ -48,6 +54,11 @@ class DriftEngine:
 
         # Get all active CMDB items
         cmdb_items = self.db.query(CMDBItem).all()
+
+        logger.info(
+            "Loaded entities and CMDB items for comparison",
+            extra={"entity_count": len(entities), "cmdb_count": len(cmdb_items)}
+        )
 
         drift_records = []
 
@@ -85,6 +96,20 @@ class DriftEngine:
         for drift in drift_records:
             self.db.add(drift)
         self.db.commit()
+
+        # Log summary by drift type
+        drift_summary = {}
+        for drift in drift_records:
+            drift_summary[drift.drift_type] = drift_summary.get(drift.drift_type, 0) + 1
+
+        logger.info(
+            "Drift detection completed",
+            extra={
+                "snapshot_id": snapshot_id,
+                "total_drifts": len(drift_records),
+                "drift_summary": drift_summary
+            }
+        )
 
         return drift_records
 

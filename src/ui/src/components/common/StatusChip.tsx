@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Chip, type ChipProps } from '@mui/material';
 
 type Status = 'open' | 'acknowledged' | 'resolved' | 'proposed' | 'approved' | 'rejected' | 'applied' | 'failed' | 'pending' | 'completed' | 'active' | 'decommissioned' | 'planned';
@@ -27,9 +28,12 @@ interface StatusChipProps {
   size?: 'small' | 'medium';
 }
 
-export function StatusChip({ status, size = 'small' }: StatusChipProps) {
+export const StatusChip = memo(function StatusChip({
+  status,
+  size = 'small'
+}: StatusChipProps) {
   const color = statusColors[status as Status] || 'default';
   const label = status.replace(/_/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
   return <Chip label={label} color={color} size={size} />;
-}
+});

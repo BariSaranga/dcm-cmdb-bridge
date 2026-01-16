@@ -5,6 +5,7 @@ from sqlalchemy.orm import Session
 
 from config import settings
 from database import get_db, engine, Base
+from logging_config import setup_logging, get_logger
 from routers import (
     discovery_router,
     cmdb_router,
@@ -12,6 +13,8 @@ from routers import (
     actions_router,
     audit_router,
     graph_router,
+    demo_router,
+    ai_router,
 )
 
 app = FastAPI(
@@ -36,11 +39,20 @@ app.include_router(drift_router)
 app.include_router(actions_router)
 app.include_router(audit_router)
 app.include_router(graph_router)
+app.include_router(demo_router)
+app.include_router(ai_router)
 
 
 @app.on_event("startup")
 def on_startup():
+    # Initialize logging
+    setup_logging(level="INFO", json_format=settings.debug is False)
+    logger = get_logger(__name__)
+    logger.info("Starting DCM-CMDB Bridge API", extra={"app_name": settings.app_name})
+
+    # Create database tables
     Base.metadata.create_all(bind=engine)
+    logger.info("Database tables initialized")
 
 
 @app.get("/health")

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Paper, Box, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
 
@@ -9,7 +10,13 @@ interface SummaryCardProps {
   color?: string;
 }
 
-export function SummaryCard({ title, value, icon, subtitle, color }: SummaryCardProps) {
+export const SummaryCard = memo(function SummaryCard({
+  title,
+  value,
+  icon,
+  subtitle,
+  color
+}: SummaryCardProps) {
   return (
     <Paper
       sx={{
@@ -17,6 +24,11 @@ export function SummaryCard({ title, value, icon, subtitle, color }: SummaryCard
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        transition: 'all 0.2s ease-in-out',
+        '&:hover': {
+          transform: 'translateY(-2px)',
+          boxShadow: 3,
+        },
       }}
     >
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -51,4 +63,4 @@ export function SummaryCard({ title, value, icon, subtitle, color }: SummaryCard
       </Box>
     </Paper>
   );
-}
+});

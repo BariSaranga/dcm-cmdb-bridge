@@ -15,15 +15,15 @@ import {
   Select,
   MenuItem,
   Button,
-  IconButton,
   Skeleton,
   Alert,
   Typography,
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { PageContainer } from '../../components/layout';
-import { StatusChip, SeverityChip } from '../../components/common';
+import { StatusChip, SeverityChip, EmptyState } from '../../components/common';
 import { useDriftRecords } from '../../api/hooks/useDrift';
 import { DriftDetailsDrawer } from './DriftDetailsDrawer';
 
@@ -223,15 +223,36 @@ export function DriftsPage() {
                 ))
               ) : data?.items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
-                    <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-                      No drift records found
-                    </Typography>
+                  <TableCell colSpan={7} sx={{ border: 0 }}>
+                    {hasFilters ? (
+                      <EmptyState
+                        icon={<SearchOffIcon sx={{ fontSize: 40 }} />}
+                        title="No matching drift records"
+                        description="Try adjusting your filters to find what you're looking for."
+                        action={{ label: 'Clear Filters', onClick: clearFilters }}
+                      />
+                    ) : (
+                      <EmptyState
+                        icon={<CheckCircleOutlineIcon sx={{ fontSize: 40, color: 'success.main' }} />}
+                        title="No drift detected"
+                        description="Your infrastructure is in sync with CMDB. Run a new discovery to check for changes."
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
                 data?.items.map((drift) => (
-                  <TableRow key={drift.id} hover>
+                  <TableRow
+                    key={drift.id}
+                    hover
+                    onClick={() => handleViewDetails(drift.id)}
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
+                  >
                     <TableCell>#{drift.id}</TableCell>
                     <TableCell>
                       <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
@@ -259,13 +280,9 @@ export function DriftsPage() {
                     </TableCell>
                     <TableCell>{formatDate(drift.created_at)}</TableCell>
                     <TableCell align="right">
-                      <IconButton
-                        size="small"
-                        onClick={() => handleViewDetails(drift.id)}
-                        title="View Details"
-                      >
-                        <VisibilityIcon fontSize="small" />
-                      </IconButton>
+                      <Typography variant="body2" color="primary">
+                        View →
+                      </Typography>
                     </TableCell>
                   </TableRow>
                 ))

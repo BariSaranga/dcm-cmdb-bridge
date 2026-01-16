@@ -13,6 +13,9 @@ from sqlalchemy.orm import Session
 
 from models import CMDBItem, DriftRecord
 from models.action import Action
+from logging_config import get_logger
+
+logger = get_logger(__name__)
 
 
 class ActionService:
@@ -100,6 +103,16 @@ class ActionService:
         self.db.commit()
         self.db.refresh(action)
 
+        logger.info(
+            "Action proposed",
+            extra={
+                "action_id": action.id,
+                "action_type": action_type,
+                "drift_record_id": drift_record_id,
+                "proposed_by": proposed_by
+            }
+        )
+
         return action
 
     def approve_action(
@@ -119,6 +132,15 @@ class ActionService:
 
         self.db.commit()
         self.db.refresh(action)
+
+        logger.info(
+            "Action approved",
+            extra={
+                "action_id": action_id,
+                "action_type": action.action_type,
+                "reviewed_by": reviewed_by
+            }
+        )
 
         return action
 
@@ -140,6 +162,16 @@ class ActionService:
         self.db.commit()
         self.db.refresh(action)
 
+        logger.info(
+            "Action rejected",
+            extra={
+                "action_id": action_id,
+                "action_type": action.action_type,
+                "reviewed_by": reviewed_by,
+                "comment": comment
+            }
+        )
+
         return action
 
     def apply_action(self, action_id: int) -> Action:
@@ -150,6 +182,11 @@ class ActionService:
         """
         action = self._get_action(action_id)
         self._validate_transition(action, "applied")
+
+        logger.info(
+            "Applying action",
+            extra={"action_id": action_id, "action_type": action.action_type}
+        )
 
         try:
             result = self._execute_action(action)
@@ -165,9 +202,27 @@ class ActionService:
                 drift_record.status = "resolved"
                 drift_record.resolved_at = datetime.utcnow()
 
+            logger.info(
+                "Action applied successfully",
+                extra={
+                    "action_id": action_id,
+                    "action_type": action.action_type,
+                    "drift_record_id": action.drift_record_id
+                }
+            )
+
         except Exception as e:
             action.status = "failed"
             action.result = {"error": str(e)}
+            logger.error(
+                "Action failed",
+                extra={
+                    "action_id": action_id,
+                    "action_type": action.action_type,
+                    "error": str(e)
+                },
+                exc_info=True
+            )
 
         self.db.commit()
         self.db.refresh(action)

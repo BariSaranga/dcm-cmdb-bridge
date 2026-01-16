@@ -4,12 +4,14 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider, CssBaseline } from '@mui/material';
 import { theme } from './theme/theme';
 import { AppShell } from './components/layout';
+import { ToastProvider } from './contexts';
 
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import GraphPage from './features/graph/GraphPage';
 import { DriftsPage } from './features/drifts/DriftsPage';
 import { ActionsPage } from './features/actions/ActionsPage';
 import { AuditPage } from './features/audit/AuditPage';
+import { LieDetectorPage } from './features/lie-detector';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -26,19 +28,22 @@ export default function App() {
     <QueryClientProvider client={queryClient}>
       <ThemeProvider theme={theme}>
         <CssBaseline />
-        <BrowserRouter>
-          <AppShell>
-            <Routes>
-              <Route path="/" element={<Navigate to="/dashboard" replace />} />
-              <Route path="/dashboard" element={<DashboardPage />} />
-              <Route path="/graph" element={<GraphPage />} />
-              <Route path="/drifts" element={<DriftsPage />} />
-              <Route path="/actions" element={<ActionsPage />} />
-              <Route path="/audit" element={<AuditPage />} />
-              <Route path="*" element={<Navigate to="/dashboard" replace />} />
-            </Routes>
-          </AppShell>
-        </BrowserRouter>
+        <ToastProvider>
+          <BrowserRouter>
+            <AppShell>
+              <Routes>
+                <Route path="/" element={<Navigate to="/dashboard" replace />} />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/lie-detector" element={<LieDetectorPage />} />
+                <Route path="/graph" element={<GraphPage />} />
+                <Route path="/drifts" element={<DriftsPage />} />
+                <Route path="/actions" element={<ActionsPage />} />
+                <Route path="/audit" element={<AuditPage />} />
+                <Route path="*" element={<Navigate to="/dashboard" replace />} />
+              </Routes>
+            </AppShell>
+          </BrowserRouter>
+        </ToastProvider>
       </ThemeProvider>
       <ReactQueryDevtools initialIsOpen={false} />
     </QueryClientProvider>

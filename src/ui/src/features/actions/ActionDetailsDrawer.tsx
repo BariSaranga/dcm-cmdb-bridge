@@ -83,7 +83,7 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
       anchor="right"
       open={actionId !== null}
       onClose={onClose}
-      PaperProps={{ sx: { width: 450 } }}
+      PaperProps={{ sx: { width: { xs: '100%', sm: 450 } } }}
     >
       <Box sx={{ p: 2 }}>
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

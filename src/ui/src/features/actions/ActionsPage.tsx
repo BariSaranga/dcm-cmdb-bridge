@@ -15,17 +15,18 @@ import {
   Select,
   MenuItem,
   Button,
-  IconButton,
   Skeleton,
   Alert,
   Typography,
 } from '@mui/material';
-import VisibilityIcon from '@mui/icons-material/Visibility';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import TaskAltIcon from '@mui/icons-material/TaskAlt';
+import SearchOffIcon from '@mui/icons-material/SearchOff';
 import { PageContainer } from '../../components/layout';
-import { StatusChip } from '../../components/common';
+import { StatusChip, EmptyState, ConfirmDialog } from '../../components/common';
 import { useActions, useApproveAction, useRejectAction } from '../../api/hooks/useActions';
 import { ActionDetailsDrawer } from './ActionDetailsDrawer';
+import { useToast } from '../../contexts';
 
 const ACTION_TYPES = [
   { value: '', label: 'All Types' },
@@ -44,6 +45,12 @@ const ACTION_STATUSES = [
   { value: 'failed', label: 'Failed' },
 ];
 
+interface ConfirmState {
+  open: boolean;
+  type: 'approve' | 'reject' | null;
+  actionId: number | null;
+}
+
 export function ActionsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [page, setPage] = useState(0);
@@ -51,7 +58,13 @@ export function ActionsPage() {
   const [actionType, setActionType] = useState('');
   const [status, setStatus] = useState('');
   const [selectedActionId, setSelectedActionId] = useState<number | null>(null);
+  const [confirmState, setConfirmState] = useState<ConfirmState>({
+    open: false,
+    type: null,
+    actionId: null,
+  });
 
+  const { showSuccess, showError } = useToast();
   const approveAction = useApproveAction();
   const rejectAction = useRejectAction();
 
@@ -88,14 +101,30 @@ export function ActionsPage() {
     setSearchParams({});
   };
 
-  const handleQuickApprove = async (id: number, e: React.MouseEvent) => {
+  const openConfirmDialog = (type: 'approve' | 'reject', actionId: number, e: React.MouseEvent) => {
     e.stopPropagation();
-    await approveAction.mutateAsync({ id, reviewed_by: 'admin' });
+    setConfirmState({ open: true, type, actionId });
   };
 
-  const handleQuickReject = async (id: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    await rejectAction.mutateAsync({ id, reviewed_by: 'admin' });
+  const closeConfirmDialog = () => {
+    setConfirmState({ open: false, type: null, actionId: null });
+  };
+
+  const handleConfirm = async () => {
+    if (!confirmState.actionId || !confirmState.type) return;
+
+    try {
+      if (confirmState.type === 'approve') {
+        await approveAction.mutateAsync({ id: confirmState.actionId, reviewed_by: 'admin' });
+        showSuccess(`Action #${confirmState.actionId} approved successfully`);
+      } else {
+        await rejectAction.mutateAsync({ id: confirmState.actionId, reviewed_by: 'admin' });
+        showSuccess(`Action #${confirmState.actionId} rejected`);
+      }
+      closeConfirmDialog();
+    } catch {
+      showError(`Failed to ${confirmState.type} action`);
+    }
   };
 
   const hasFilters = actionType || status;
@@ -208,15 +237,36 @@ export function ActionsPage() {
                 ))
               ) : data?.items.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7}>
-                    <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-                      No actions found
-                    </Typography>
+                  <TableCell colSpan={7} sx={{ border: 0 }}>
+                    {hasFilters ? (
+                      <EmptyState
+                        icon={<SearchOffIcon sx={{ fontSize: 40 }} />}
+                        title="No matching actions"
+                        description="Try adjusting your filters to find what you're looking for."
+                        action={{ label: 'Clear Filters', onClick: clearFilters }}
+                      />
+                    ) : (
+                      <EmptyState
+                        icon={<TaskAltIcon sx={{ fontSize: 40, color: 'success.main' }} />}
+                        title="No pending actions"
+                        description="All caught up! There are no actions requiring your attention."
+                      />
+                    )}
                   </TableCell>
                 </TableRow>
               ) : (
                 data?.items.map((action) => (
-                  <TableRow key={action.id} hover>
+                  <TableRow
+                    key={action.id}
+                    hover
+                    onClick={() => handleViewDetails(action.id)}
+                    sx={{
+                      cursor: 'pointer',
+                      '&:hover': {
+                        backgroundColor: 'action.hover',
+                      },
+                    }}
+                  >
                     <TableCell>#{action.id}</TableCell>
                     <TableCell>
                       <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
@@ -243,15 +293,15 @@ export function ActionsPage() {
                     <TableCell>{formatDate(action.proposed_at)}</TableCell>
                     <TableCell align="right">
                       <Box sx={{ display: 'flex', gap: 0.5, justifyContent: 'flex-end' }}>
-                        {action.status === 'proposed' && (
+                        {action.status === 'proposed' ? (
                           <>
                             <Button
                               size="small"
                               color="success"
                               variant="outlined"
-                              onClick={(e) => handleQuickApprove(action.id, e)}
+                              onClick={(e) => openConfirmDialog('approve', action.id, e)}
                               disabled={approveAction.isPending}
-                              sx={{ minWidth: 'auto', px: 1 }}
+                              sx={{ minWidth: 'auto', px: 1.5 }}
                             >
                               Approve
                             </Button>
@@ -259,21 +309,18 @@ export function ActionsPage() {
                               size="small"
                               color="error"
                               variant="outlined"
-                              onClick={(e) => handleQuickReject(action.id, e)}
+                              onClick={(e) => openConfirmDialog('reject', action.id, e)}
                               disabled={rejectAction.isPending}
-                              sx={{ minWidth: 'auto', px: 1 }}
+                              sx={{ minWidth: 'auto', px: 1.5 }}
                             >
                               Reject
                             </Button>
                           </>
+                        ) : (
+                          <Typography variant="body2" color="primary">
+                            View →
+                          </Typography>
                         )}
-                        <IconButton
-                          size="small"
-                          onClick={() => handleViewDetails(action.id)}
-                          title="View Details"
-                        >
-                          <VisibilityIcon fontSize="small" />
-                        </IconButton>
                       </Box>
                     </TableCell>
                   </TableRow>
@@ -294,6 +341,22 @@ export function ActionsPage() {
       </Paper>
 
       <ActionDetailsDrawer actionId={selectedActionId} onClose={handleCloseDrawer} />
+
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        open={confirmState.open}
+        title={confirmState.type === 'approve' ? 'Approve Action?' : 'Reject Action?'}
+        message={
+          confirmState.type === 'approve'
+            ? `Are you sure you want to approve action #${confirmState.actionId}? This will allow the action to be applied.`
+            : `Are you sure you want to reject action #${confirmState.actionId}? This cannot be undone.`
+        }
+        confirmLabel={confirmState.type === 'approve' ? 'Approve' : 'Reject'}
+        confirmColor={confirmState.type === 'approve' ? 'success' : 'error'}
+        isLoading={approveAction.isPending || rejectAction.isPending}
+        onConfirm={handleConfirm}
+        onCancel={closeConfirmDialog}
+      />
     </PageContainer>
   );
 }
