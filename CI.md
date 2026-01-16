@@ -27,3 +27,9 @@
 - Demo scenario tests must pass
 - AI logic tested with mocked LLM responses
 - CI fails on hallucination or missing evidence
+
+---
+
+## Docs Validations
+- Validate docs/architecture/system-model.yaml exists and is parseable
+- Validate Mermaid diagram generation step (no broken diagrams)

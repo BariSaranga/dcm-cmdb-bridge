@@ -1,0 +1,76 @@
+version: 1
+views:
+  - id: containers
+    title: Platform Containers View
+  - id: components
+    title: Platform Components View
+
+nodes:
+  - id: ui
+    name: Web UI
+    type: container
+    tech: React/Vite/TS
+    description: User interface for drifts, graph, approvals, audit, architecture, thermals.
+  - id: api
+    name: API Service
+    type: container
+    tech: FastAPI
+    description: REST API for platform modules.
+  - id: worker
+    name: Worker
+    type: container
+    tech: RQ/Redis
+    description: Async jobs for discovery, drift, graph, thermals ingestion.
+  - id: db
+    name: Postgres
+    type: datastore
+    tech: Postgres
+    description: Persistence for snapshots, drifts, actions, audit, graph, telemetry.
+  - id: redis
+    name: Redis
+    type: datastore
+    tech: Redis
+    description: Queue backend for worker.
+  - id: k8s
+    name: Kubernetes Cluster
+    type: external
+    tech: K8s API
+    description: Runtime truth source.
+  - id: cmdb
+    name: Mock CMDB
+    type: external
+    tech: Postgres tables
+    description: CMDB reality representation for MVP.
+  - id: prom
+    name: Prometheus
+    type: external
+    tech: Prometheus API
+    description: Optional telemetry source for thermals.
+
+edges:
+  - from: ui
+    to: api
+    relation: calls
+    protocol: https
+  - from: api
+    to: db
+    relation: reads_writes
+  - from: api
+    to: redis
+    relation: enqueues_jobs
+  - from: worker
+    to: redis
+    relation: consumes_jobs
+  - from: worker
+    to: db
+    relation: reads_writes
+  - from: worker
+    to: k8s
+    relation: collects
+    protocol: k8s-api
+  - from: worker
+    to: cmdb
+    relation: syncs_compares
+  - from: worker
+    to: prom
+    relation: collects_optional

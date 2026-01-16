@@ -104,3 +104,16 @@ Structure:
 AI Layer:
 Consumes graph snapshots, CMDB records, drift data, and audit logs.
 Produces evidence-based explanations with confidence and action suggestions.
+
+---
+
+## Architecture Visualizer Module
+- Purpose: present the platform architecture as a living diagram
+- Source of truth: docs/architecture/system-model.yaml
+- Rendering: Mermaid (MVP), React Flow later
+- UI: Architecture page + drilldown
+
+## Data Center Thermals Module
+- Purpose: temperature and health telemetry for data center components (NVIDIA-ready)
+- Connectors: mock (MVP), Prometheus optional, DCGM exporter later
+- UI: heatmap, drilldown, alerts

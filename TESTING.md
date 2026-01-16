@@ -51,3 +51,15 @@ Fixtures:
   - Evidence maps to real entities
   - Confidence is present
   - Graph highlights match explanation
+
+---
+
+## Architecture Visualizer Testing
+- Validate system-model.yaml schema and required fields
+- Diagram generation produces valid Mermaid text
+- UI renders without runtime errors
+
+## Thermals Testing
+- Unit tests for alert threshold logic
+- Integration tests for metrics ingestion and query endpoints
+- UI smoke tests for heatmap and drilldown

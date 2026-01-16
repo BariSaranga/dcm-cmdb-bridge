@@ -83,3 +83,19 @@ The AI must:
   - Suggested actions
 
 The AI is a decision-support layer and must never auto-apply changes.
+
+---
+
+## NEW MODULE: Architecture Visualizer
+Add an Architecture module that renders a visual, impressive diagram of the platform itself.
+- Source of truth: docs/architecture/system-model.yaml
+- API: serve model and diagram outputs
+- UI: Architecture page with view modes and drilldown side panel
+MVP renderer: Mermaid.
+
+## NEW MODULE: Data Center Thermals (NVIDIA-ready)
+Add a Thermals module for data center component temperature visibility.
+- Telemetry connectors abstraction
+- MVP: mock telemetry + optional Prometheus connector
+- DB tables for metrics and alerts
+- UI: heatmap, drilldown, alerts
