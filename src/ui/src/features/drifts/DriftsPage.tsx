@@ -18,6 +18,7 @@ import {
   Skeleton,
   Alert,
   Typography,
+  alpha,
 } from '@mui/material';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
@@ -26,6 +27,7 @@ import { PageContainer } from '../../components/layout';
 import { StatusChip, SeverityChip, EmptyState } from '../../components/common';
 import { useDriftRecords } from '../../api/hooks/useDrift';
 import { DriftDetailsDrawer } from './DriftDetailsDrawer';
+import { colors } from '../../theme/theme';
 
 const DRIFT_TYPES = [
   { value: '', label: 'All Types' },
@@ -111,6 +113,27 @@ export function DriftsPage() {
     return type.replace(/_/g, ' ');
   };
 
+  const selectStyles = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: alpha(colors.background.elevated, 0.5),
+      '& fieldset': {
+        borderColor: colors.divider,
+      },
+      '&:hover fieldset': {
+        borderColor: alpha(colors.primary.main, 0.5),
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: colors.primary.main,
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: colors.text.secondary,
+    },
+    '& .MuiSelect-select': {
+      color: colors.text.primary,
+    },
+  };
+
   if (error) {
     return (
       <PageContainer title="Drifts">
@@ -124,9 +147,17 @@ export function DriftsPage() {
   return (
     <PageContainer title="Drifts">
       {/* Filters */}
-      <Paper sx={{ p: 2, mb: 3 }}>
+      <Paper
+        sx={{
+          p: 2.5,
+          mb: 3,
+          background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+          border: `1px solid ${colors.divider}`,
+          backdropFilter: 'blur(10px)',
+        }}
+      >
         <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap', alignItems: 'center' }}>
-          <FormControl size="small" sx={{ minWidth: 180 }}>
+          <FormControl size="small" sx={{ minWidth: 180, ...selectStyles }}>
             <InputLabel>Type</InputLabel>
             <Select
               value={driftType}
@@ -144,7 +175,7 @@ export function DriftsPage() {
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size="small" sx={{ minWidth: 150, ...selectStyles }}>
             <InputLabel>Severity</InputLabel>
             <Select
               value={severity}
@@ -162,7 +193,7 @@ export function DriftsPage() {
             </Select>
           </FormControl>
 
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size="small" sx={{ minWidth: 150, ...selectStyles }}>
             <InputLabel>Status</InputLabel>
             <Select
               value={status}
@@ -186,6 +217,13 @@ export function DriftsPage() {
               size="small"
               startIcon={<FilterListOffIcon />}
               onClick={clearFilters}
+              sx={{
+                color: colors.text.secondary,
+                '&:hover': {
+                  color: colors.text.primary,
+                  backgroundColor: alpha(colors.primary.main, 0.08),
+                },
+              }}
             >
               Clear Filters
             </Button>
@@ -194,10 +232,29 @@ export function DriftsPage() {
       </Paper>
 
       {/* Table */}
-      <Paper>
+      <Paper
+        sx={{
+          background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+          border: `1px solid ${colors.divider}`,
+          backdropFilter: 'blur(10px)',
+          overflow: 'hidden',
+        }}
+      >
         <TableContainer>
           <Table>
-            <TableHead>
+            <TableHead
+              sx={{
+                backgroundColor: alpha(colors.background.default, 0.5),
+                '& .MuiTableCell-head': {
+                  color: colors.text.secondary,
+                  fontWeight: 600,
+                  fontSize: '0.75rem',
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  borderBottom: `1px solid ${colors.divider}`,
+                },
+              }}
+            >
               <TableRow>
                 <TableCell>ID</TableCell>
                 <TableCell>Type</TableCell>
@@ -233,7 +290,7 @@ export function DriftsPage() {
                       />
                     ) : (
                       <EmptyState
-                        icon={<CheckCircleOutlineIcon sx={{ fontSize: 40, color: 'success.main' }} />}
+                        icon={<CheckCircleOutlineIcon sx={{ fontSize: 40, color: colors.success.main }} />}
                         title="No drift detected"
                         description="Your infrastructure is in sync with CMDB. Run a new discovery to check for changes."
                       />
@@ -244,18 +301,25 @@ export function DriftsPage() {
                 data?.items.map((drift) => (
                   <TableRow
                     key={drift.id}
-                    hover
                     onClick={() => handleViewDetails(drift.id)}
                     sx={{
                       cursor: 'pointer',
+                      transition: 'all 0.2s ease-in-out',
                       '&:hover': {
-                        backgroundColor: 'action.hover',
+                        backgroundColor: alpha(colors.primary.main, 0.08),
+                      },
+                      '& .MuiTableCell-body': {
+                        borderBottom: `1px solid ${colors.divider}`,
                       },
                     }}
                   >
-                    <TableCell>#{drift.id}</TableCell>
                     <TableCell>
-                      <Typography variant="body2" sx={{ fontSize: '0.85rem' }}>
+                      <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+                        #{drift.id}
+                      </Typography>
+                    </TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ fontSize: '0.85rem', color: colors.text.primary }}>
                         {formatDriftType(drift.drift_type)}
                       </Typography>
                     </TableCell>
@@ -273,14 +337,26 @@ export function DriftsPage() {
                           overflow: 'hidden',
                           textOverflow: 'ellipsis',
                           whiteSpace: 'nowrap',
+                          color: colors.text.secondary,
                         }}
                       >
                         {drift.description}
                       </Typography>
                     </TableCell>
-                    <TableCell>{formatDate(drift.created_at)}</TableCell>
+                    <TableCell>
+                      <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+                        {formatDate(drift.created_at)}
+                      </Typography>
+                    </TableCell>
                     <TableCell align="right">
-                      <Typography variant="body2" color="primary">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: colors.primary.light,
+                          fontWeight: 500,
+                          '&:hover': { textDecoration: 'underline' },
+                        }}
+                      >
                         View →
                       </Typography>
                     </TableCell>
@@ -298,6 +374,12 @@ export function DriftsPage() {
           rowsPerPage={rowsPerPage}
           onRowsPerPageChange={handleChangeRowsPerPage}
           rowsPerPageOptions={[10, 25, 50, 100]}
+          sx={{
+            borderTop: `1px solid ${colors.divider}`,
+            '& .MuiTablePagination-selectLabel, & .MuiTablePagination-displayedRows': {
+              color: colors.text.secondary,
+            },
+          }}
         />
       </Paper>
 

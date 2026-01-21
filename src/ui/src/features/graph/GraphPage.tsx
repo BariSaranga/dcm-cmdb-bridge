@@ -27,6 +27,7 @@ import {
   CircularProgress,
   Alert,
   Button,
+  alpha,
 } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { PageContainer } from '../../components/layout/PageContainer';
@@ -34,6 +35,7 @@ import { useLatestGraph, useBuildGraph, useGraphSummary } from '../../api/hooks'
 import type { GraphNode as GraphNodeType, GraphDriftStatus } from '../../api/types';
 import InfraNode from './components/InfraNode';
 import NodeDetailsPanel from './NodeDetailsPanel';
+import { colors } from '../../theme/theme';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const nodeTypes: NodeTypes = { infraNode: InfraNode as any };
@@ -94,10 +96,10 @@ function convertEdges(
     style: {
       stroke:
         edge.style === 'error'
-          ? '#f44336'
+          ? colors.error.main
           : edge.style === 'warning'
-            ? '#ff9800'
-            : '#1976d2',
+            ? colors.warning.main
+            : colors.primary.main,
       strokeWidth: 2,
     },
   }));
@@ -170,6 +172,27 @@ export default function GraphPage() {
     }
   };
 
+  const selectStyles = {
+    '& .MuiOutlinedInput-root': {
+      backgroundColor: alpha(colors.background.elevated, 0.5),
+      '& fieldset': {
+        borderColor: colors.divider,
+      },
+      '&:hover fieldset': {
+        borderColor: alpha(colors.primary.main, 0.5),
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: colors.primary.main,
+      },
+    },
+    '& .MuiInputLabel-root': {
+      color: colors.text.secondary,
+    },
+    '& .MuiSelect-select': {
+      color: colors.text.primary,
+    },
+  };
+
   if (isLoading) {
     return (
       <PageContainer title="Infrastructure Graph">
@@ -181,7 +204,7 @@ export default function GraphPage() {
             height: 400,
           }}
         >
-          <CircularProgress />
+          <CircularProgress sx={{ color: colors.primary.main }} />
         </Box>
       </PageContainer>
     );
@@ -190,7 +213,15 @@ export default function GraphPage() {
   if (error) {
     return (
       <PageContainer title="Infrastructure Graph">
-        <Alert severity="warning" sx={{ mb: 2 }}>
+        <Alert
+          severity="warning"
+          sx={{
+            mb: 2,
+            backgroundColor: alpha(colors.warning.main, 0.1),
+            border: `1px solid ${alpha(colors.warning.main, 0.2)}`,
+            '& .MuiAlert-icon': { color: colors.warning.main },
+          }}
+        >
           No graph data available. Build a graph from a snapshot to visualize your infrastructure.
         </Alert>
         <Button
@@ -198,6 +229,13 @@ export default function GraphPage() {
           startIcon={<RefreshIcon />}
           onClick={handleBuildGraph}
           disabled={buildGraph.isPending || !summary?.latest_snapshot_id}
+          sx={{
+            backgroundColor: colors.primary.main,
+            '&:hover': {
+              backgroundColor: colors.primary.dark,
+              boxShadow: `0 0 20px ${alpha(colors.primary.main, 0.4)}`,
+            },
+          }}
         >
           {buildGraph.isPending ? 'Building...' : 'Build Graph'}
         </Button>
@@ -207,16 +245,41 @@ export default function GraphPage() {
 
   return (
     <PageContainer title="Infrastructure Graph">
-      <Paper sx={{ p: 2, mb: 2 }}>
+      <Paper
+        sx={{
+          p: 2.5,
+          mb: 3,
+          background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+          border: `1px solid ${colors.divider}`,
+          backdropFilter: 'blur(10px)',
+        }}
+      >
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center', flexWrap: 'wrap' }}>
           <TextField
             size="small"
             placeholder="Search nodes..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            sx={{ minWidth: 200 }}
+            sx={{
+              minWidth: 200,
+              '& .MuiOutlinedInput-root': {
+                backgroundColor: alpha(colors.background.elevated, 0.5),
+                '& fieldset': {
+                  borderColor: colors.divider,
+                },
+                '&:hover fieldset': {
+                  borderColor: alpha(colors.primary.main, 0.5),
+                },
+                '&.Mui-focused fieldset': {
+                  borderColor: colors.primary.main,
+                },
+              },
+              '& .MuiInputBase-input': {
+                color: colors.text.primary,
+              },
+            }}
           />
-          <FormControl size="small" sx={{ minWidth: 120 }}>
+          <FormControl size="small" sx={{ minWidth: 120, ...selectStyles }}>
             <InputLabel>Node Type</InputLabel>
             <Select
               value={nodeTypeFilter}
@@ -230,7 +293,7 @@ export default function GraphPage() {
               ))}
             </Select>
           </FormControl>
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+          <FormControl size="small" sx={{ minWidth: 150, ...selectStyles }}>
             <InputLabel>Drift Status</InputLabel>
             <Select
               value={driftFilter}
@@ -252,11 +315,19 @@ export default function GraphPage() {
               label={`${graphData?.node_count || 0} nodes`}
               size="small"
               variant="outlined"
+              sx={{
+                borderColor: colors.divider,
+                color: colors.text.secondary,
+              }}
             />
             <Chip
               label={`${graphData?.edge_count || 0} edges`}
               size="small"
               variant="outlined"
+              sx={{
+                borderColor: colors.divider,
+                color: colors.text.secondary,
+              }}
             />
           </Box>
 
@@ -265,13 +336,26 @@ export default function GraphPage() {
             startIcon={<RefreshIcon />}
             onClick={handleBuildGraph}
             disabled={buildGraph.isPending}
+            sx={{
+              color: colors.primary.light,
+              '&:hover': {
+                backgroundColor: alpha(colors.primary.main, 0.1),
+              },
+            }}
           >
             Rebuild
           </Button>
         </Box>
       </Paper>
 
-      <Paper sx={{ height: 600 }}>
+      <Paper
+        sx={{
+          height: 600,
+          background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+          border: `1px solid ${colors.divider}`,
+          overflow: 'hidden',
+        }}
+      >
         <ReactFlow
           nodes={nodes}
           edges={edges}
@@ -282,49 +366,77 @@ export default function GraphPage() {
           fitView
           minZoom={0.1}
           maxZoom={2}
+          style={{ background: colors.background.default }}
         >
-          <Controls />
+          <Controls
+            style={{
+              backgroundColor: colors.background.elevated,
+              borderColor: colors.divider,
+            }}
+          />
           <MiniMap
             nodeColor={(node) => {
               const data = node.data as { graphNode?: GraphNodeType };
-              if (data.graphNode?.node_type === 'runtime') return '#1976d2';
-              return '#9c27b0';
+              if (data.graphNode?.node_type === 'runtime') return colors.primary.main;
+              return colors.secondary.main;
+            }}
+            style={{
+              backgroundColor: alpha(colors.background.elevated, 0.9),
+              border: `1px solid ${colors.divider}`,
             }}
           />
-          <Background variant={BackgroundVariant.Dots} gap={20} size={1} />
+          <Background
+            variant={BackgroundVariant.Dots}
+            gap={20}
+            size={1}
+            color={alpha(colors.text.disabled, 0.3)}
+          />
         </ReactFlow>
       </Paper>
 
       {summary && (
-        <Paper sx={{ p: 2, mt: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
+        <Paper
+          sx={{
+            p: 2.5,
+            mt: 3,
+            background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+            border: `1px solid ${colors.divider}`,
+            backdropFilter: 'blur(10px)',
+          }}
+        >
+          <Typography variant="subtitle2" gutterBottom sx={{ color: colors.text.primary, fontWeight: 600 }}>
             Summary
           </Typography>
-          <Box sx={{ display: 'flex', gap: 2, flexWrap: 'wrap' }}>
+          <Box sx={{ display: 'flex', gap: 1.5, flexWrap: 'wrap' }}>
             {Object.entries(summary.nodes_by_type).map(([type, count]) => (
               <Chip
                 key={type}
                 label={`${type}: ${count}`}
                 size="small"
-                color={type === 'runtime' ? 'primary' : 'secondary'}
-                variant="outlined"
+                sx={{
+                  backgroundColor: alpha(type === 'runtime' ? colors.primary.main : colors.secondary.main, 0.15),
+                  color: type === 'runtime' ? colors.primary.light : colors.secondary.light,
+                  border: `1px solid ${alpha(type === 'runtime' ? colors.primary.main : colors.secondary.main, 0.3)}`,
+                }}
               />
             ))}
-            {Object.entries(summary.nodes_by_drift_status).map(([status, count]) => (
-              <Chip
-                key={status}
-                label={`${status}: ${count}`}
-                size="small"
-                color={
-                  status === 'mapped'
-                    ? 'success'
-                    : status.includes('missing') || status.includes('stale')
-                      ? 'error'
-                      : 'warning'
-                }
-                variant="outlined"
-              />
-            ))}
+            {Object.entries(summary.nodes_by_drift_status).map(([status, count]) => {
+              const isGood = status === 'mapped';
+              const isBad = status.includes('missing') || status.includes('stale');
+              const statusColor = isGood ? colors.success.main : isBad ? colors.error.main : colors.warning.main;
+              return (
+                <Chip
+                  key={status}
+                  label={`${status}: ${count}`}
+                  size="small"
+                  sx={{
+                    backgroundColor: alpha(statusColor, 0.15),
+                    color: statusColor,
+                    border: `1px solid ${alpha(statusColor, 0.3)}`,
+                  }}
+                />
+              );
+            })}
           </Box>
         </Paper>
       )}

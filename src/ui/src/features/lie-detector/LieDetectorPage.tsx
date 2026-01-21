@@ -10,6 +10,7 @@ import {
   CircularProgress,
   Chip,
   Grid,
+  alpha,
 } from '@mui/material';
 import {
   Warning as WarningIcon,
@@ -21,6 +22,7 @@ import { CMDBColumn } from './CMDBColumn';
 import { BureaucracyColumn } from './BureaucracyColumn';
 import { AIExplanationPanel } from './AIExplanationPanel';
 import { useToast } from '../../contexts';
+import { colors } from '../../theme/theme';
 
 export function LieDetectorPage() {
   const { data: explanation, isLoading, error, refetch } = useDemoExplanation();
@@ -41,6 +43,17 @@ export function LieDetectorPage() {
     }
   };
 
+  const getRiskGradient = (riskLevel: string) => {
+    switch (riskLevel) {
+      case 'critical':
+        return `linear-gradient(135deg, ${colors.error.dark} 0%, ${colors.error.main} 100%)`;
+      case 'high':
+        return `linear-gradient(135deg, ${colors.warning.dark} 0%, ${colors.warning.main} 100%)`;
+      default:
+        return `linear-gradient(135deg, ${colors.primary.dark} 0%, ${colors.primary.main} 100%)`;
+    }
+  };
+
   const getRiskColor = (riskLevel: string) => {
     switch (riskLevel) {
       case 'critical':
@@ -58,7 +71,7 @@ export function LieDetectorPage() {
     return (
       <Container maxWidth="xl" sx={{ py: 4 }}>
         <Box display="flex" justifyContent="center" alignItems="center" minHeight={400}>
-          <CircularProgress />
+          <CircularProgress sx={{ color: colors.primary.main }} />
         </Box>
       </Container>
     );
@@ -80,9 +93,16 @@ export function LieDetectorPage() {
               {seeding ? 'Seeding...' : 'Load Demo'}
             </Button>
           }
+          sx={{
+            backgroundColor: alpha(colors.info.main, 0.1),
+            border: `1px solid ${alpha(colors.info.main, 0.2)}`,
+            '& .MuiAlert-icon': { color: colors.info.main },
+          }}
         >
-          <AlertTitle>Demo Not Loaded</AlertTitle>
-          Click "Load Demo" to seed the Infrastructure Lie Detector scenario.
+          <AlertTitle sx={{ color: colors.text.primary }}>Demo Not Loaded</AlertTitle>
+          <Typography sx={{ color: colors.text.secondary }}>
+            Click "Load Demo" to seed the Infrastructure Lie Detector scenario.
+          </Typography>
         </Alert>
       </Container>
     );
@@ -96,14 +116,15 @@ export function LieDetectorPage() {
         sx={{
           p: 3,
           mb: 3,
-          background: (theme) =>
-            explanation.risk_level === 'critical'
-              ? `linear-gradient(135deg, ${theme.palette.error.dark} 0%, ${theme.palette.error.main} 100%)`
-              : explanation.risk_level === 'high'
-              ? `linear-gradient(135deg, ${theme.palette.warning.dark} 0%, ${theme.palette.warning.main} 100%)`
-              : `linear-gradient(135deg, ${theme.palette.primary.dark} 0%, ${theme.palette.primary.main} 100%)`,
+          background: getRiskGradient(explanation.risk_level),
           color: 'white',
           borderRadius: 2,
+          boxShadow:
+            explanation.risk_level === 'critical'
+              ? `0 0 40px ${alpha(colors.error.main, 0.4)}`
+              : explanation.risk_level === 'high'
+              ? `0 0 40px ${alpha(colors.warning.main, 0.3)}`
+              : `0 0 40px ${alpha(colors.primary.main, 0.3)}`,
         }}
       >
         <Box display="flex" alignItems="center" justifyContent="space-between">
@@ -130,7 +151,14 @@ export function LieDetectorPage() {
               onClick={handleSeedDemo}
               disabled={seeding}
               startIcon={seeding ? <CircularProgress size={16} color="inherit" /> : <RefreshIcon />}
-              sx={{ color: 'white', borderColor: 'rgba(255,255,255,0.5)' }}
+              sx={{
+                color: 'white',
+                borderColor: 'rgba(255,255,255,0.5)',
+                '&:hover': {
+                  borderColor: 'white',
+                  backgroundColor: 'rgba(255,255,255,0.1)',
+                },
+              }}
             >
               Reset Demo
             </Button>

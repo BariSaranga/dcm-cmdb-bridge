@@ -7,7 +7,9 @@ import {
   DialogActions,
   Button,
   CircularProgress,
+  alpha,
 } from '@mui/material';
+import { colors } from '../../theme/theme';
 
 interface ConfirmDialogProps {
   open: boolean;
@@ -40,15 +42,43 @@ export const ConfirmDialog = memo(function ConfirmDialog({
       aria-describedby="confirm-dialog-description"
       maxWidth="xs"
       fullWidth
+      PaperProps={{
+        sx: {
+          background: `linear-gradient(135deg, ${alpha(colors.background.elevated, 0.95)} 0%, ${alpha(colors.background.paper, 0.9)} 100%)`,
+          backdropFilter: 'blur(20px)',
+          border: `1px solid ${colors.divider}`,
+          boxShadow: `0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 60px ${alpha(colors.primary.main, 0.1)}`,
+        },
+      }}
     >
-      <DialogTitle id="confirm-dialog-title">{title}</DialogTitle>
+      <DialogTitle
+        id="confirm-dialog-title"
+        sx={{
+          color: colors.text.primary,
+          fontWeight: 600,
+        }}
+      >
+        {title}
+      </DialogTitle>
       <DialogContent>
-        <DialogContentText id="confirm-dialog-description">
+        <DialogContentText
+          id="confirm-dialog-description"
+          sx={{ color: colors.text.secondary }}
+        >
           {message}
         </DialogContentText>
       </DialogContent>
       <DialogActions sx={{ px: 3, pb: 2 }}>
-        <Button onClick={onCancel} disabled={isLoading}>
+        <Button
+          onClick={onCancel}
+          disabled={isLoading}
+          sx={{
+            color: colors.text.secondary,
+            '&:hover': {
+              backgroundColor: alpha(colors.text.primary, 0.04),
+            },
+          }}
+        >
           {cancelLabel}
         </Button>
         <Button

@@ -9,6 +9,7 @@ import {
   Chip,
   Divider,
   Alert,
+  alpha,
 } from '@mui/material';
 import {
   Inventory as InventoryIcon,
@@ -17,6 +18,7 @@ import {
   Help as HelpIcon,
 } from '@mui/icons-material';
 import type { AIEvidence } from '../../api/hooks';
+import { colors } from '../../theme/theme';
 
 interface CMDBColumnProps {
   evidence: AIEvidence[];
@@ -34,31 +36,33 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
 
   const getStatusIcon = (item: AIEvidence) => {
     if (item.fact.includes('No CMDB record') || item.data.status === 'missing') {
-      return <CancelIcon color="error" />;
+      return <CancelIcon sx={{ color: colors.error.main }} />;
     }
     if (item.data.status === 'active') {
-      return <CheckIcon color="success" />;
+      return <CheckIcon sx={{ color: colors.success.main }} />;
     }
-    return <HelpIcon color="warning" />;
+    return <HelpIcon sx={{ color: colors.warning.main }} />;
   };
 
   return (
     <Paper
-      elevation={2}
+      elevation={0}
       sx={{
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
+        background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+        border: `1px solid ${colors.divider}`,
+        backdropFilter: 'blur(10px)',
+        overflow: 'hidden',
       }}
     >
       {/* Header */}
       <Box
         sx={{
-          p: 2,
-          background: (theme) =>
-            `linear-gradient(135deg, ${theme.palette.secondary.main} 0%, ${theme.palette.secondary.dark} 100%)`,
+          p: 2.5,
+          background: `linear-gradient(135deg, ${colors.secondary.main} 0%, ${colors.secondary.dark} 100%)`,
           color: 'white',
-          borderRadius: '4px 4px 0 0',
         }}
       >
         <Box display="flex" alignItems="center" gap={1}>
@@ -73,13 +77,21 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
       </Box>
 
       {/* Content */}
-      <Box sx={{ p: 2, flexGrow: 1 }}>
+      <Box sx={{ p: 2, flexGrow: 1, overflowY: 'auto' }}>
         {hasMissingRecord && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            <Typography variant="body2" fontWeight="bold">
+          <Alert
+            severity="error"
+            sx={{
+              mb: 2,
+              backgroundColor: alpha(colors.error.main, 0.1),
+              border: `1px solid ${alpha(colors.error.main, 0.2)}`,
+              '& .MuiAlert-icon': { color: colors.error.main },
+            }}
+          >
+            <Typography variant="body2" fontWeight="bold" sx={{ color: colors.text.primary }}>
               Missing CMDB Record
             </Typography>
-            <Typography variant="caption">
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               This entity is not tracked in the Configuration Management Database
             </Typography>
           </Alert>
@@ -93,7 +105,7 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
           <List disablePadding>
             {cmdbEvidence.map((item, index) => (
               <Box key={`cmdb-${index}`}>
-                {index > 0 && <Divider sx={{ my: 1 }} />}
+                {index > 0 && <Divider sx={{ my: 1.5, borderColor: colors.divider }} />}
                 <ListItem alignItems="flex-start" sx={{ px: 0 }}>
                   <ListItemIcon sx={{ minWidth: 40 }}>
                     {getStatusIcon(item)}
@@ -101,26 +113,37 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
                   <ListItemText
                     primary={
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography variant="subtitle2" fontWeight="bold" sx={{ color: colors.text.primary }}>
                           {item.entity_name}
                         </Typography>
                         <Chip
                           label={item.data.status === 'missing' ? 'MISSING' : 'TRACKED'}
                           size="small"
-                          color={item.data.status === 'missing' ? 'error' : 'success'}
-                          sx={{ height: 20, fontSize: '0.7rem' }}
+                          sx={{
+                            height: 20,
+                            fontSize: '0.7rem',
+                            backgroundColor: item.data.status === 'missing'
+                              ? alpha(colors.error.main, 0.15)
+                              : alpha(colors.success.main, 0.15),
+                            color: item.data.status === 'missing'
+                              ? colors.error.main
+                              : colors.success.main,
+                            border: `1px solid ${item.data.status === 'missing'
+                              ? alpha(colors.error.main, 0.3)
+                              : alpha(colors.success.main, 0.3)}`,
+                          }}
                         />
                       </Box>
                     }
                     secondary={
                       <Box sx={{ mt: 1 }}>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                           {item.fact}
                         </Typography>
                         {item.data.owner ? (
                           <Box mt={0.5}>
-                            <Typography variant="caption" color="text.secondary">
-                              Owner: <strong>{String(item.data.owner)}</strong>
+                            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
+                              Owner: <strong style={{ color: colors.primary.light }}>{String(item.data.owner)}</strong>
                             </Typography>
                           </Box>
                         ) : null}
@@ -133,27 +156,32 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
 
             {driftEvidence.map((item, index) => (
               <Box key={`drift-${index}`}>
-                <Divider sx={{ my: 1 }} />
+                <Divider sx={{ my: 1.5, borderColor: colors.divider }} />
                 <ListItem alignItems="flex-start" sx={{ px: 0 }}>
                   <ListItemIcon sx={{ minWidth: 40 }}>
-                    <CancelIcon color="error" />
+                    <CancelIcon sx={{ color: colors.error.main }} />
                   </ListItemIcon>
                   <ListItemText
                     primary={
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="subtitle2" fontWeight="bold">
+                        <Typography variant="subtitle2" fontWeight="bold" sx={{ color: colors.text.primary }}>
                           {item.entity_name}
                         </Typography>
                         <Chip
                           label="DRIFT"
                           size="small"
-                          color="error"
-                          sx={{ height: 20, fontSize: '0.7rem' }}
+                          sx={{
+                            height: 20,
+                            fontSize: '0.7rem',
+                            backgroundColor: alpha(colors.error.main, 0.15),
+                            color: colors.error.main,
+                            border: `1px solid ${alpha(colors.error.main, 0.3)}`,
+                          }}
                         />
                       </Box>
                     }
                     secondary={
-                      <Typography variant="body2" color="text.secondary" sx={{ mt: 1 }}>
+                      <Typography variant="body2" sx={{ mt: 1, color: colors.text.secondary }}>
                         {item.fact}
                       </Typography>
                     }
@@ -169,12 +197,16 @@ export function CMDBColumn({ evidence }: CMDBColumnProps) {
       <Box
         sx={{
           p: 2,
-          borderTop: 1,
-          borderColor: 'divider',
-          backgroundColor: hasMissingRecord ? 'error.50' : 'grey.50',
+          borderTop: `1px solid ${colors.divider}`,
+          backgroundColor: hasMissingRecord
+            ? alpha(colors.error.main, 0.1)
+            : alpha(colors.background.default, 0.5),
         }}
       >
-        <Typography variant="caption" color={hasMissingRecord ? 'error.main' : 'text.secondary'}>
+        <Typography
+          variant="caption"
+          sx={{ color: hasMissingRecord ? colors.error.main : colors.text.secondary }}
+        >
           {hasMissingRecord
             ? 'Action required: Create CMDB record'
             : `${cmdbEvidence.length} CMDB fact(s)`}

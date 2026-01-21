@@ -14,6 +14,7 @@ import {
   ListItemText,
   Divider,
   Alert,
+  alpha,
 } from '@mui/material';
 import {
   ExpandMore as ExpandMoreIcon,
@@ -24,6 +25,7 @@ import {
   CheckCircle as CheckIcon,
 } from '@mui/icons-material';
 import type { AIExplanation } from '../../api/hooks';
+import { colors } from '../../theme/theme';
 
 interface AIExplanationPanelProps {
   explanation: AIExplanation;
@@ -59,28 +61,44 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
   };
 
   return (
-    <Paper elevation={2}>
+    <Paper
+      elevation={0}
+      sx={{
+        background: `linear-gradient(135deg, ${alpha(colors.background.paper, 0.9)} 0%, ${alpha(colors.background.elevated, 0.8)} 100%)`,
+        border: `1px solid ${colors.divider}`,
+        overflow: 'hidden',
+      }}
+    >
       {/* Header */}
       <Box
         sx={{
-          p: 2,
+          p: 2.5,
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'space-between',
-          borderBottom: 1,
-          borderColor: 'divider',
-          backgroundColor: 'grey.50',
+          borderBottom: `1px solid ${colors.divider}`,
+          background: `linear-gradient(135deg, ${alpha(colors.primary.main, 0.1)} 0%, ${alpha(colors.secondary.main, 0.05)} 100%)`,
         }}
       >
-        <Box display="flex" alignItems="center" gap={1}>
-          <PsychologyIcon color="primary" />
-          <Typography variant="h6" fontWeight="bold">
+        <Box display="flex" alignItems="center" gap={1.5}>
+          <Box
+            sx={{
+              p: 1,
+              borderRadius: 2,
+              background: `linear-gradient(135deg, ${colors.primary.main} 0%, ${colors.secondary.main} 100%)`,
+              display: 'flex',
+              boxShadow: `0 0 20px ${alpha(colors.primary.main, 0.3)}`,
+            }}
+          >
+            <PsychologyIcon sx={{ color: '#fff', fontSize: 20 }} />
+          </Box>
+          <Typography variant="h6" sx={{ fontWeight: 600, color: colors.text.primary }}>
             AI Analysis
           </Typography>
         </Box>
         <Box display="flex" alignItems="center" gap={2}>
           <Box display="flex" alignItems="center" gap={1}>
-            <Typography variant="caption" color="text.secondary">
+            <Typography variant="caption" sx={{ color: colors.text.secondary }}>
               Confidence:
             </Typography>
             <Chip
@@ -104,69 +122,128 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
       </Box>
 
       {/* Summary Accordion */}
-      <Accordion expanded={expanded === 'summary'} onChange={handleChange('summary')}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Accordion
+        expanded={expanded === 'summary'}
+        onChange={handleChange('summary')}
+        sx={{
+          backgroundColor: 'transparent',
+          '&:before': { display: 'none' },
+          boxShadow: 'none',
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ color: colors.text.secondary }} />}
+          sx={{
+            borderBottom: `1px solid ${colors.divider}`,
+            '&:hover': { backgroundColor: alpha(colors.primary.main, 0.04) },
+          }}
+        >
           <Box display="flex" alignItems="center" gap={1}>
-            <LightbulbIcon color="primary" />
-            <Typography fontWeight="bold">Summary</Typography>
+            <LightbulbIcon sx={{ color: colors.primary.main }} />
+            <Typography sx={{ fontWeight: 600, color: colors.text.primary }}>Summary</Typography>
           </Box>
         </AccordionSummary>
-        <AccordionDetails>
-          <Typography variant="body1" paragraph>
+        <AccordionDetails sx={{ p: 2.5 }}>
+          <Typography variant="body1" sx={{ color: colors.text.primary, mb: 2, lineHeight: 1.7 }}>
             {explanation.summary}
           </Typography>
-          <Alert severity="info" icon={<PsychologyIcon />}>
-            <Typography variant="body2" fontWeight="bold">
+          <Alert
+            severity="info"
+            icon={<PsychologyIcon />}
+            sx={{
+              backgroundColor: alpha(colors.info.main, 0.1),
+              border: `1px solid ${alpha(colors.info.main, 0.2)}`,
+              '& .MuiAlert-icon': { color: colors.info.main },
+            }}
+          >
+            <Typography variant="body2" sx={{ fontWeight: 600, color: colors.text.primary }}>
               Inference
             </Typography>
-            <Typography variant="body2">{explanation.inference}</Typography>
+            <Typography variant="body2" sx={{ color: colors.text.secondary }}>
+              {explanation.inference}
+            </Typography>
           </Alert>
         </AccordionDetails>
       </Accordion>
 
       {/* Evidence Accordion */}
-      <Accordion expanded={expanded === 'evidence'} onChange={handleChange('evidence')}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Accordion
+        expanded={expanded === 'evidence'}
+        onChange={handleChange('evidence')}
+        sx={{
+          backgroundColor: 'transparent',
+          '&:before': { display: 'none' },
+          boxShadow: 'none',
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ color: colors.text.secondary }} />}
+          sx={{
+            borderBottom: `1px solid ${colors.divider}`,
+            '&:hover': { backgroundColor: alpha(colors.primary.main, 0.04) },
+          }}
+        >
           <Box display="flex" alignItems="center" gap={1}>
-            <DataIcon color="primary" />
-            <Typography fontWeight="bold">Evidence</Typography>
-            <Chip label={explanation.evidence.length} size="small" sx={{ ml: 1 }} />
+            <DataIcon sx={{ color: colors.primary.main }} />
+            <Typography sx={{ fontWeight: 600, color: colors.text.primary }}>Evidence</Typography>
+            <Chip
+              label={explanation.evidence.length}
+              size="small"
+              sx={{
+                ml: 1,
+                backgroundColor: alpha(colors.primary.main, 0.15),
+                color: colors.primary.light,
+              }}
+            />
           </Box>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{ p: 0 }}>
           <List disablePadding>
             {explanation.evidence.map((item, index) => (
               <Box key={index}>
-                {index > 0 && <Divider />}
-                <ListItem alignItems="flex-start">
-                  <ListItemIcon>{getSourceIcon(item.source)}</ListItemIcon>
+                {index > 0 && <Divider sx={{ borderColor: colors.divider }} />}
+                <ListItem
+                  alignItems="flex-start"
+                  sx={{
+                    px: 2.5,
+                    py: 2,
+                    '&:hover': { backgroundColor: alpha(colors.primary.main, 0.04) },
+                  }}
+                >
+                  <ListItemIcon sx={{ mt: 0.5 }}>{getSourceIcon(item.source)}</ListItemIcon>
                   <ListItemText
                     primary={
                       <Box display="flex" alignItems="center" gap={1}>
-                        <Typography variant="subtitle2">
+                        <Typography variant="subtitle2" sx={{ color: colors.text.primary }}>
                           {item.entity_type}: {item.entity_name}
                         </Typography>
                         <Chip
                           label={item.source.toUpperCase()}
                           size="small"
                           variant="outlined"
-                          sx={{ height: 18, fontSize: '0.65rem' }}
+                          sx={{
+                            height: 18,
+                            fontSize: '0.65rem',
+                            borderColor: colors.divider,
+                            color: colors.text.secondary,
+                          }}
                         />
                       </Box>
                     }
                     secondary={
                       <Box sx={{ mt: 0.5 }}>
-                        <Typography variant="body2" color="text.secondary">
+                        <Typography variant="body2" sx={{ color: colors.text.secondary }}>
                           {item.fact}
                         </Typography>
                         {Object.keys(item.data).length > 0 && (
                           <Box
                             sx={{
-                              mt: 1,
-                              p: 1,
-                              backgroundColor: 'grey.100',
+                              mt: 1.5,
+                              p: 1.5,
+                              backgroundColor: alpha(colors.background.default, 0.5),
+                              border: `1px solid ${colors.divider}`,
                               borderRadius: 1,
-                              fontFamily: 'monospace',
+                              fontFamily: '"Fira Code", monospace',
                               fontSize: '0.75rem',
                             }}
                           >
@@ -177,11 +254,15 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
                                   <Typography
                                     component="span"
                                     variant="caption"
-                                    color="text.secondary"
+                                    sx={{ color: colors.text.secondary }}
                                   >
                                     {key}:
                                   </Typography>{' '}
-                                  <Typography component="span" variant="caption" fontWeight="bold">
+                                  <Typography
+                                    component="span"
+                                    variant="caption"
+                                    sx={{ fontWeight: 600, color: colors.primary.light }}
+                                  >
                                     {typeof value === 'object'
                                       ? JSON.stringify(value)
                                       : String(value)}
@@ -201,22 +282,39 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
       </Accordion>
 
       {/* Risk Assessment Accordion */}
-      <Accordion expanded={expanded === 'risk'} onChange={handleChange('risk')}>
-        <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+      <Accordion
+        expanded={expanded === 'risk'}
+        onChange={handleChange('risk')}
+        sx={{
+          backgroundColor: 'transparent',
+          '&:before': { display: 'none' },
+          boxShadow: 'none',
+        }}
+      >
+        <AccordionSummary
+          expandIcon={<ExpandMoreIcon sx={{ color: colors.text.secondary }} />}
+          sx={{
+            borderBottom: `1px solid ${colors.divider}`,
+            '&:hover': { backgroundColor: alpha(colors.primary.main, 0.04) },
+          }}
+        >
           <Box display="flex" alignItems="center" gap={1}>
             <WarningIcon
-              color={
-                explanation.risk_level === 'critical'
-                  ? 'error'
-                  : explanation.risk_level === 'high'
-                  ? 'warning'
-                  : 'info'
-              }
+              sx={{
+                color:
+                  explanation.risk_level === 'critical'
+                    ? colors.error.main
+                    : explanation.risk_level === 'high'
+                    ? colors.warning.main
+                    : colors.info.main,
+              }}
             />
-            <Typography fontWeight="bold">Why This Matters</Typography>
+            <Typography sx={{ fontWeight: 600, color: colors.text.primary }}>
+              Why This Matters
+            </Typography>
           </Box>
         </AccordionSummary>
-        <AccordionDetails>
+        <AccordionDetails sx={{ p: 2.5 }}>
           <Alert
             severity={
               explanation.risk_level === 'critical'
@@ -225,12 +323,29 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
                 ? 'warning'
                 : 'info'
             }
+            sx={{
+              backgroundColor:
+                explanation.risk_level === 'critical'
+                  ? alpha(colors.error.main, 0.1)
+                  : explanation.risk_level === 'high'
+                  ? alpha(colors.warning.main, 0.1)
+                  : alpha(colors.info.main, 0.1),
+              border: `1px solid ${
+                explanation.risk_level === 'critical'
+                  ? alpha(colors.error.main, 0.2)
+                  : explanation.risk_level === 'high'
+                  ? alpha(colors.warning.main, 0.2)
+                  : alpha(colors.info.main, 0.2)
+              }`,
+            }}
           >
-            <Typography variant="body2">{explanation.why_it_matters}</Typography>
+            <Typography variant="body2" sx={{ color: colors.text.primary }}>
+              {explanation.why_it_matters}
+            </Typography>
           </Alert>
 
-          <Box mt={2}>
-            <Typography variant="subtitle2" gutterBottom>
+          <Box mt={3}>
+            <Typography variant="subtitle2" sx={{ color: colors.text.primary, mb: 1.5 }}>
               Confidence Level
             </Typography>
             <Box display="flex" alignItems="center" gap={2}>
@@ -238,15 +353,19 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
                 variant="determinate"
                 value={explanation.confidence * 100}
                 color={getConfidenceColor(explanation.confidence)}
-                sx={{ flexGrow: 1, height: 8, borderRadius: 4 }}
+                sx={{
+                  flexGrow: 1,
+                  height: 8,
+                  borderRadius: 4,
+                  backgroundColor: alpha(colors.text.primary, 0.1),
+                }}
               />
-              <Typography variant="body2" fontWeight="bold">
+              <Typography variant="body2" sx={{ fontWeight: 600, color: colors.text.primary }}>
                 {Math.round(explanation.confidence * 100)}%
               </Typography>
             </Box>
-            <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5 }}>
-              Based on {explanation.evidence.length} evidence points from runtime, CMDB, and drift
-              data
+            <Typography variant="caption" sx={{ color: colors.text.secondary, mt: 1, display: 'block' }}>
+              Based on {explanation.evidence.length} evidence points from runtime, CMDB, and drift data
             </Typography>
           </Box>
         </AccordionDetails>
@@ -254,8 +373,14 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
 
       {/* Graph Highlights */}
       {explanation.highlighted_nodes.length > 0 && (
-        <Box sx={{ p: 2, backgroundColor: 'grey.50', borderTop: 1, borderColor: 'divider' }}>
-          <Typography variant="caption" color="text.secondary">
+        <Box
+          sx={{
+            p: 2,
+            backgroundColor: alpha(colors.background.default, 0.5),
+            borderTop: `1px solid ${colors.divider}`,
+          }}
+        >
+          <Typography variant="caption" sx={{ color: colors.text.secondary }}>
             Highlighted in graph:{' '}
             {explanation.highlighted_nodes.map((node, i) => (
               <Chip
@@ -263,7 +388,13 @@ export function AIExplanationPanel({ explanation }: AIExplanationPanelProps) {
                 label={node.split(':').slice(-1)[0]}
                 size="small"
                 variant="outlined"
-                sx={{ ml: 0.5, height: 18, fontSize: '0.65rem' }}
+                sx={{
+                  ml: 0.5,
+                  height: 18,
+                  fontSize: '0.65rem',
+                  borderColor: colors.divider,
+                  color: colors.text.secondary,
+                }}
               />
             ))}
           </Typography>

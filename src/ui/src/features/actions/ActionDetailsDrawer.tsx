@@ -10,10 +10,12 @@ import {
   Stepper,
   Step,
   StepLabel,
+  alpha,
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { StatusChip } from '../../components/common';
 import { useAction, useApproveAction, useRejectAction, useApplyAction } from '../../api/hooks/useActions';
+import { colors } from '../../theme/theme';
 
 interface ActionDetailsDrawerProps {
   actionId: number | null;
@@ -83,29 +85,80 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
       anchor="right"
       open={actionId !== null}
       onClose={onClose}
-      PaperProps={{ sx: { width: { xs: '100%', sm: 450 } } }}
+      PaperProps={{
+        sx: {
+          width: { xs: '100%', sm: 480 },
+          background: `linear-gradient(180deg, ${colors.background.elevated} 0%, ${colors.background.paper} 100%)`,
+          borderLeft: `1px solid ${colors.divider}`,
+        },
+      }}
     >
-      <Box sx={{ p: 2 }}>
+      {/* Header */}
+      <Box
+        sx={{
+          p: 3,
+          borderBottom: `1px solid ${colors.divider}`,
+          background: alpha(colors.background.default, 0.5),
+        }}
+      >
         <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6">Action Details</Typography>
-          <IconButton onClick={onClose} size="small">
+          <Typography
+            variant="h6"
+            sx={{ fontWeight: 600, color: colors.text.primary }}
+          >
+            Action Details
+          </Typography>
+          <IconButton
+            onClick={onClose}
+            size="small"
+            sx={{
+              color: colors.text.secondary,
+              '&:hover': {
+                backgroundColor: alpha(colors.text.primary, 0.08),
+              },
+            }}
+          >
             <CloseIcon />
           </IconButton>
         </Box>
       </Box>
-      <Divider />
-      <Box sx={{ p: 2 }}>
+
+      {/* Content */}
+      <Box sx={{ p: 3, overflowY: 'auto', flex: 1 }}>
         {isLoading ? (
           <>
             <Skeleton variant="text" width="60%" />
             <Skeleton variant="text" width="40%" />
-            <Skeleton variant="rectangular" height={100} sx={{ mt: 2 }} />
+            <Skeleton variant="rectangular" height={100} sx={{ mt: 2, borderRadius: 2 }} />
           </>
         ) : action ? (
           <>
             {/* Workflow Stepper */}
             <Box sx={{ mb: 3 }}>
-              <Stepper activeStep={getActiveStep(action.status)} alternativeLabel>
+              <Stepper
+                activeStep={getActiveStep(action.status)}
+                alternativeLabel
+                sx={{
+                  '& .MuiStepLabel-label': {
+                    color: colors.text.secondary,
+                    '&.Mui-active': {
+                      color: colors.primary.light,
+                    },
+                    '&.Mui-completed': {
+                      color: colors.success.main,
+                    },
+                  },
+                  '& .MuiStepIcon-root': {
+                    color: alpha(colors.text.secondary, 0.3),
+                    '&.Mui-active': {
+                      color: colors.primary.main,
+                    },
+                    '&.Mui-completed': {
+                      color: colors.success.main,
+                    },
+                  },
+                }}
+              >
                 {WORKFLOW_STEPS.map((label, index) => (
                   <Step key={label}>
                     <StepLabel error={isStepFailed(index)}>{label}</StepLabel>
@@ -114,48 +167,106 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
               </Stepper>
             </Box>
 
+            {/* ID and Status */}
             <Box sx={{ mb: 3 }}>
-              <Typography variant="body2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="body2"
+                sx={{ color: colors.text.secondary, mb: 1.5 }}
+              >
                 ID: #{action.id}
               </Typography>
-              <Box sx={{ display: 'flex', gap: 1, mb: 2 }}>
+              <Box sx={{ display: 'flex', gap: 1 }}>
                 <StatusChip status={action.status} />
               </Box>
             </Box>
 
+            {/* Action Type */}
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colors.text.secondary,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 500,
+                }}
+              >
                 Action Type
               </Typography>
-              <Typography variant="body1">{formatActionType(action.action_type)}</Typography>
+              <Typography
+                variant="body1"
+                sx={{ color: colors.text.primary, mt: 0.5 }}
+              >
+                {formatActionType(action.action_type)}
+              </Typography>
             </Box>
 
+            {/* Description */}
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colors.text.secondary,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 500,
+                }}
+              >
                 Description
               </Typography>
-              <Typography variant="body1">{action.description}</Typography>
+              <Typography
+                variant="body1"
+                sx={{ color: colors.text.primary, mt: 0.5, lineHeight: 1.6 }}
+              >
+                {action.description}
+              </Typography>
             </Box>
 
+            {/* Proposed By */}
             <Box sx={{ mb: 3 }}>
-              <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+              <Typography
+                variant="caption"
+                sx={{
+                  color: colors.text.secondary,
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.05em',
+                  fontWeight: 500,
+                }}
+              >
                 Proposed By
               </Typography>
-              <Typography variant="body2">
+              <Typography
+                variant="body2"
+                sx={{ color: colors.text.primary, mt: 0.5 }}
+              >
                 {action.proposed_by} on {formatDate(action.proposed_at)}
               </Typography>
             </Box>
 
             {action.reviewed_by && (
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colors.text.secondary,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontWeight: 500,
+                  }}
+                >
                   Reviewed By
                 </Typography>
-                <Typography variant="body2">
+                <Typography
+                  variant="body2"
+                  sx={{ color: colors.text.primary, mt: 0.5 }}
+                >
                   {action.reviewed_by} on {formatDate(action.reviewed_at)}
                 </Typography>
                 {action.review_comment && (
-                  <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                  <Typography
+                    variant="body2"
+                    sx={{ color: colors.text.secondary, mt: 0.5 }}
+                  >
                     Comment: {action.review_comment}
                   </Typography>
                 )}
@@ -164,36 +275,61 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
 
             {action.applied_at && (
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colors.text.secondary,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontWeight: 500,
+                  }}
+                >
                   Applied
                 </Typography>
-                <Typography variant="body2">{formatDate(action.applied_at)}</Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ color: colors.text.primary, mt: 0.5 }}
+                >
+                  {formatDate(action.applied_at)}
+                </Typography>
               </Box>
             )}
 
             {action.payload && Object.keys(action.payload).length > 0 && (
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colors.text.secondary,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontWeight: 500,
+                  }}
+                >
                   Payload
                 </Typography>
                 <Paper
                   variant="outlined"
                   sx={{
+                    mt: 1,
                     p: 2,
-                    backgroundColor: 'grey.50',
+                    backgroundColor: alpha(colors.background.default, 0.5),
+                    border: `1px solid ${colors.divider}`,
                     maxHeight: 150,
                     overflow: 'auto',
+                    borderRadius: 2,
                   }}
                 >
                   <Typography
                     component="pre"
                     variant="body2"
                     sx={{
-                      fontFamily: 'monospace',
+                      fontFamily: '"Fira Code", "Monaco", monospace',
                       fontSize: '0.75rem',
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
                       m: 0,
+                      color: colors.text.secondary,
                     }}
                   >
                     {JSON.stringify(action.payload, null, 2)}
@@ -204,27 +340,39 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
 
             {action.result && Object.keys(action.result).length > 0 && (
               <Box sx={{ mb: 3 }}>
-                <Typography variant="subtitle2" color="text.secondary" gutterBottom>
+                <Typography
+                  variant="caption"
+                  sx={{
+                    color: colors.text.secondary,
+                    textTransform: 'uppercase',
+                    letterSpacing: '0.05em',
+                    fontWeight: 500,
+                  }}
+                >
                   Result
                 </Typography>
                 <Paper
                   variant="outlined"
                   sx={{
+                    mt: 1,
                     p: 2,
-                    backgroundColor: 'grey.50',
+                    backgroundColor: alpha(colors.background.default, 0.5),
+                    border: `1px solid ${colors.divider}`,
                     maxHeight: 150,
                     overflow: 'auto',
+                    borderRadius: 2,
                   }}
                 >
                   <Typography
                     component="pre"
                     variant="body2"
                     sx={{
-                      fontFamily: 'monospace',
+                      fontFamily: '"Fira Code", "Monaco", monospace',
                       fontSize: '0.75rem',
                       whiteSpace: 'pre-wrap',
                       wordBreak: 'break-word',
                       m: 0,
+                      color: colors.text.secondary,
                     }}
                   >
                     {JSON.stringify(action.result, null, 2)}
@@ -233,24 +381,40 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
               </Box>
             )}
 
-            <Divider sx={{ my: 2 }} />
+            <Divider sx={{ my: 3, borderColor: colors.divider }} />
 
-            <Box sx={{ display: 'flex', gap: 1 }}>
+            {/* Actions */}
+            <Box sx={{ display: 'flex', gap: 1.5 }}>
               {action.status === 'proposed' && (
                 <>
                   <Button
                     variant="contained"
-                    color="success"
                     onClick={handleApprove}
                     disabled={approveAction.isPending}
+                    sx={{
+                      flex: 1,
+                      backgroundColor: colors.success.main,
+                      '&:hover': {
+                        backgroundColor: colors.success.dark,
+                        boxShadow: `0 0 20px ${alpha(colors.success.main, 0.4)}`,
+                      },
+                    }}
                   >
                     Approve
                   </Button>
                   <Button
                     variant="outlined"
-                    color="error"
                     onClick={handleReject}
                     disabled={rejectAction.isPending}
+                    sx={{
+                      flex: 1,
+                      color: colors.error.main,
+                      borderColor: alpha(colors.error.main, 0.5),
+                      '&:hover': {
+                        borderColor: colors.error.main,
+                        backgroundColor: alpha(colors.error.main, 0.1),
+                      },
+                    }}
                   >
                     Reject
                   </Button>
@@ -259,9 +423,16 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
               {action.status === 'approved' && (
                 <Button
                   variant="contained"
-                  color="primary"
                   onClick={handleApply}
                   disabled={applyAction.isPending}
+                  sx={{
+                    flex: 1,
+                    backgroundColor: colors.primary.main,
+                    '&:hover': {
+                      backgroundColor: colors.primary.dark,
+                      boxShadow: `0 0 20px ${alpha(colors.primary.main, 0.4)}`,
+                    },
+                  }}
                 >
                   Apply
                 </Button>
@@ -269,7 +440,9 @@ export function ActionDetailsDrawer({ actionId, onClose }: ActionDetailsDrawerPr
             </Box>
           </>
         ) : (
-          <Typography color="text.secondary">Action not found</Typography>
+          <Typography sx={{ color: colors.text.secondary }}>
+            Action not found
+          </Typography>
         )}
       </Box>
     </Drawer>
