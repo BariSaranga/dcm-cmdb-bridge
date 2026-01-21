@@ -194,3 +194,63 @@ export interface GraphSummary {
   nodes_by_type: Record<string, number>;
   nodes_by_drift_status: Record<string, number>;
 }
+
+// Architecture types
+export type ArchitectureNodeType = 'container' | 'datastore' | 'external';
+
+export interface ArchitectureView {
+  id: string;
+  title: string;
+}
+
+export interface ArchitectureNode {
+  id: string;
+  name: string;
+  type: ArchitectureNodeType;
+  tech: string;
+  description: string;
+}
+
+export interface ArchitectureEdge {
+  source: string;
+  target: string;
+  relation: string;
+  protocol: string | null;
+}
+
+export interface ArchitectureModel {
+  version: number;
+  views: ArchitectureView[];
+  nodes: ArchitectureNode[];
+  edges: ArchitectureEdge[];
+}
+
+export interface ArchitectureDiagram {
+  view: string;
+  format: string;
+  diagram: string;
+}
+
+export interface ArchitectureConnection {
+  node_id?: string;
+  from?: string;
+  to?: string;
+  from_name?: string;
+  to_name?: string;
+  relation: string;
+  protocol: string | null;
+}
+
+export interface ArchitectureNodeDetails {
+  node: ArchitectureNode;
+  incoming_connections: ArchitectureConnection[];
+  outgoing_connections: ArchitectureConnection[];
+}
+
+export interface ArchitectureValidation {
+  valid: boolean;
+  issues: string[];
+  node_count: number;
+  edge_count: number;
+  view_count: number;
+}

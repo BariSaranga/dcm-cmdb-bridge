@@ -15,6 +15,7 @@ from routers import (
     graph_router,
     demo_router,
     ai_router,
+    architecture_router,
 )
 
 app = FastAPI(
@@ -41,6 +42,7 @@ app.include_router(audit_router)
 app.include_router(graph_router)
 app.include_router(demo_router)
 app.include_router(ai_router)
+app.include_router(architecture_router)
 
 
 @app.on_event("startup")

@@ -20,6 +20,7 @@
     "@tanstack/react-query-devtools": "^5.91.2",
     "@xyflow/react": "^12.10.0",
     "axios": "^1.13.2",
+    "mermaid": "^11.12.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-router-dom": "^7.12.0"

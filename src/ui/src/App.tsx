@@ -8,10 +8,12 @@ import { ToastProvider } from './contexts';
 
 import { DashboardPage } from './features/dashboard/DashboardPage';
 import GraphPage from './features/graph/GraphPage';
+import { ArchitecturePage } from './features/architecture';
 import { DriftsPage } from './features/drifts/DriftsPage';
 import { ActionsPage } from './features/actions/ActionsPage';
 import { AuditPage } from './features/audit/AuditPage';
 import { LieDetectorPage } from './features/lie-detector';
+import { AIChatPage } from './features/ai-chat';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,8 +36,10 @@ export default function App() {
               <Routes>
                 <Route path="/" element={<Navigate to="/dashboard" replace />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/ai-assistant" element={<AIChatPage />} />
                 <Route path="/lie-detector" element={<LieDetectorPage />} />
                 <Route path="/graph" element={<GraphPage />} />
+                <Route path="/architecture" element={<ArchitecturePage />} />
                 <Route path="/drifts" element={<DriftsPage />} />
                 <Route path="/actions" element={<ActionsPage />} />
                 <Route path="/audit" element={<AuditPage />} />

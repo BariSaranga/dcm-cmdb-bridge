@@ -32,6 +32,28 @@ jobs:
         env:
           PYTHONPATH: .
 
+      - name: Validate system-model.yaml
+        run: |
+          python -c "
+          from services import ArchitectureService
+          service = ArchitectureService('../../docs/architecture/system-model.yaml')
+          result = service.validate_model()
+          if not result['valid']:
+              print('Validation failed:')
+              for issue in result['issues']:
+                  print(f'  - {issue}')
+              exit(1)
+          print(f'Model valid: {result[\"node_count\"]} nodes, {result[\"edge_count\"]} edges')
+          # Also test Mermaid generation
+          diagram = service.generate_mermaid()
+          if 'flowchart' not in diagram:
+              print('Mermaid diagram generation failed')
+              exit(1)
+          print('Mermaid diagram generated successfully')
+          "
+        env:
+          PYTHONPATH: .
+
   frontend:
     name: Frontend Tests
     runs-on: ubuntu-latest
