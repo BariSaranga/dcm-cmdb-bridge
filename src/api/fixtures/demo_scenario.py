@@ -12,7 +12,7 @@ Scenario: "payment-service"
 - No one has taken action
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from sqlalchemy.orm import Session
 
 from models import (
@@ -56,8 +56,8 @@ def seed_demo_scenario(db: Session) -> dict:
     clear_demo_data(db)
 
     # Timeline: payment-service deployed 8 months ago
-    eight_months_ago = datetime.utcnow() - timedelta(days=240)
-    three_months_ago = datetime.utcnow() - timedelta(days=90)
+    eight_months_ago = datetime.now(timezone.utc) - timedelta(days=240)
+    three_months_ago = datetime.now(timezone.utc) - timedelta(days=90)
 
     # ===================
     # 1. RUNTIME SNAPSHOT
@@ -288,8 +288,8 @@ def seed_demo_scenario(db: Session) -> dict:
         status="completed",
         node_count=0,
         edge_count=0,
-        created_at=datetime.utcnow(),
-        completed_at=datetime.utcnow()
+        created_at=datetime.now(timezone.utc),
+        completed_at=datetime.now(timezone.utc)
     )
     db.add(graph)
     db.flush()

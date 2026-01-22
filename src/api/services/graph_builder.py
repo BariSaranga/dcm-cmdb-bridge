@@ -7,7 +7,7 @@ Builds infrastructure graph snapshots combining:
 - Drift records for mapping status
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Dict, Optional
 from sqlalchemy.orm import Session
 
@@ -62,7 +62,7 @@ class GraphBuilder:
             graph_snapshot.node_count = len(nodes)
             graph_snapshot.edge_count = len(edges)
             graph_snapshot.status = "completed"
-            graph_snapshot.completed_at = datetime.utcnow()
+            graph_snapshot.completed_at = datetime.now(timezone.utc)
 
         except Exception as e:
             graph_snapshot.status = "failed"

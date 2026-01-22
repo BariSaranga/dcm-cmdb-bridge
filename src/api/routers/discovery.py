@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 import asyncio
 
@@ -105,12 +105,12 @@ async def run_collection(
             # Update snapshot
             snapshot.status = "completed"
             snapshot.entity_count = len(entities_data)
-            snapshot.completed_at = datetime.utcnow()
+            snapshot.completed_at = datetime.now(timezone.utc)
 
         except Exception as e:
             snapshot.status = "failed"
             snapshot.error_message = str(e)
-            snapshot.completed_at = datetime.utcnow()
+            snapshot.completed_at = datetime.now(timezone.utc)
 
         db.commit()
     finally:

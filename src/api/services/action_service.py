@@ -7,7 +7,7 @@ Manages the lifecycle of remediation actions:
 - Apply: Execute the approved action against CMDB
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional, Dict, Any
 from sqlalchemy.orm import Session
 
@@ -127,7 +127,7 @@ class ActionService:
 
         action.status = "approved"
         action.reviewed_by = reviewed_by
-        action.reviewed_at = datetime.utcnow()
+        action.reviewed_at = datetime.now(timezone.utc)
         action.review_comment = comment
 
         self.db.commit()
@@ -156,7 +156,7 @@ class ActionService:
 
         action.status = "rejected"
         action.reviewed_by = reviewed_by
-        action.reviewed_at = datetime.utcnow()
+        action.reviewed_at = datetime.now(timezone.utc)
         action.review_comment = comment
 
         self.db.commit()
@@ -191,7 +191,7 @@ class ActionService:
         try:
             result = self._execute_action(action)
             action.status = "applied"
-            action.applied_at = datetime.utcnow()
+            action.applied_at = datetime.now(timezone.utc)
             action.result = result
 
             # Mark drift as resolved
@@ -200,7 +200,7 @@ class ActionService:
             ).first()
             if drift_record:
                 drift_record.status = "resolved"
-                drift_record.resolved_at = datetime.utcnow()
+                drift_record.resolved_at = datetime.now(timezone.utc)
 
             logger.info(
                 "Action applied successfully",

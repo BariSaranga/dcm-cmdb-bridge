@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
@@ -152,7 +152,7 @@ def update_drift_status(
 
     record.status = update.status
     if update.status == "resolved":
-        record.resolved_at = datetime.utcnow()
+        record.resolved_at = datetime.now(timezone.utc)
 
     db.commit()
     db.refresh(record)

@@ -15,7 +15,7 @@ Response structure (per ADR-0003):
 from typing import Optional, List, Dict, Any
 from dataclasses import dataclass
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from models import (
     NormalizedEntity,
@@ -272,7 +272,7 @@ class AIExplainerService:
             if created_str:
                 try:
                     created = datetime.fromisoformat(created_str.replace("Z", "+00:00"))
-                    days = (datetime.utcnow() - created.replace(tzinfo=None)).days
+                    days = (datetime.now(timezone.utc) - created.replace(tzinfo=None)).days
                     if days > 30:
                         running_duration = f"{days // 30} months"
                     else:
