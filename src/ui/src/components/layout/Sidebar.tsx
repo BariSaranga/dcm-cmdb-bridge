@@ -18,6 +18,7 @@ import ArchitectureIcon from '@mui/icons-material/Architecture';
 import WarningIcon from '@mui/icons-material/Warning';
 import PlaylistAddCheckIcon from '@mui/icons-material/PlaylistAddCheck';
 import HistoryIcon from '@mui/icons-material/History';
+import PaymentsIcon from '@mui/icons-material/Payments';
 import { colors } from '../../theme/theme';
 
 const DRAWER_WIDTH = 260;
@@ -31,6 +32,7 @@ const navItems = [
   { path: '/drifts', label: 'Drifts', icon: <WarningIcon /> },
   { path: '/actions', label: 'Actions', icon: <PlaylistAddCheckIcon /> },
   { path: '/audit', label: 'Audit Log', icon: <HistoryIcon /> },
+  { path: '/pricing', label: 'Pricing', icon: <PaymentsIcon /> },
 ];
 
 export function Sidebar() {

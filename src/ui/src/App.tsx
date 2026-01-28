@@ -14,6 +14,7 @@ import { ActionsPage } from './features/actions/ActionsPage';
 import { AuditPage } from './features/audit/AuditPage';
 import { LieDetectorPage } from './features/lie-detector';
 import { AIChatPage } from './features/ai-chat';
+import { PricingPage } from './features/pricing/PricingPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -43,6 +44,7 @@ export default function App() {
                 <Route path="/drifts" element={<DriftsPage />} />
                 <Route path="/actions" element={<ActionsPage />} />
                 <Route path="/audit" element={<AuditPage />} />
+                <Route path="/pricing" element={<PricingPage />} />
                 <Route path="*" element={<Navigate to="/dashboard" replace />} />
               </Routes>
             </AppShell>

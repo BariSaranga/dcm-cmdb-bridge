@@ -7,6 +7,7 @@ from .graph import router as graph_router
 from .demo import router as demo_router
 from .ai import router as ai_router
 from .architecture import router as architecture_router
+from .billing import router as billing_router
 
 __all__ = [
     "discovery_router",
@@ -18,4 +19,5 @@ __all__ = [
     "demo_router",
     "ai_router",
     "architecture_router",
+    "billing_router",
 ]

@@ -4,6 +4,7 @@ from .audit_service import AuditService
 from .graph_builder import GraphBuilder
 from .ai_explainer import AIExplainerService, AIExplanation, AIEvidence
 from .architecture_service import ArchitectureService, SystemModel, SystemNode, SystemEdge
+from .billing_service import BillingService
 
 __all__ = [
     "DriftEngine",
@@ -17,4 +18,5 @@ __all__ = [
     "SystemModel",
     "SystemNode",
     "SystemEdge",
+    "BillingService",
 ]
