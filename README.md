@@ -1,6 +1,6 @@
 # DCM-CMDB Bridge
 
-A platform that discovers runtime infrastructure (DCM sources), normalizes entities, detects drift vs CMDB, and syncs changes with governance, approvals, and auditability.
+DCM-CMDB Bridge is a platform that discovers runtime infrastructure (DCM sources), normalizes entities, detects drift vs CMDB, and syncs changes with governance, approvals, and auditability.
 
 ## Features (MVP)
 
