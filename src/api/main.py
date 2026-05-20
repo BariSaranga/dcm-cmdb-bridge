@@ -24,6 +24,13 @@ app = FastAPI(
     version="0.1.0",
 )
 
+
+@app.middleware("http")
+async def add_hsts_header(request, call_next):
+    response = await call_next(request)
+    response.headers["Strict-Transport-Security"] = "max-age=31536000; includeSubDomains"
+    return response
+
 # CORS middleware
 app.add_middleware(
     CORSMiddleware,
